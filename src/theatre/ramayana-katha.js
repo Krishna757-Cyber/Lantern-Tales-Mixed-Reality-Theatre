@@ -404,18 +404,40 @@ export class RamayanaKathaPlayer {
     }
     this.currentPuppetActors = [];
 
-    actors.forEach((actorConfig) => {
+    actors.forEach((actorConfig, idx) => {
       const puppet = createRamayanaPuppet(actorConfig.puppet, { scale: 1.05 });
       const mesh = puppet.buildThreeMesh(THREE);
       if (mesh) {
-        mesh.position.set(actorConfig.x || 0, puppet.position.y, 0);
+        // Entrance coordinates from stage wings or ceiling strings
+        let startX = actorConfig.x || 0;
+        let startY = puppet.position.y;
+        if (actorConfig.enterFrom === 'left') {
+          startX = -2.8 - idx * 0.35;
+        } else if (actorConfig.enterFrom === 'right') {
+          startX = 2.8 + idx * 0.35;
+        } else if (actorConfig.enterFrom === 'center') {
+          startY = 2.4; // Descends on strings from above
+        }
+
+        mesh.position.set(startX, startY, 0);
         puppet.setPose(actorConfig.pose || 'idle');
         this.activePuppetMeshGroup.add(mesh);
+
+        // Calculate natural stage facing angle (facing towards center / partner)
+        let targetRotY = 0;
+        if (actorConfig.x < -0.1) targetRotY = 0.28;
+        else if (actorConfig.x > 0.1) targetRotY = -0.28;
+
         this.currentPuppetActors.push({
           puppet,
           mesh,
           config: actorConfig,
-          baseX: actorConfig.x || 0
+          startX,
+          startY,
+          targetX: actorConfig.x || 0,
+          targetY: puppet.position.y,
+          targetRotY,
+          action: actorConfig.action || actorConfig.pose || 'idle'
         });
       }
     });
@@ -484,11 +506,44 @@ export class RamayanaKathaPlayer {
   update(dt, elapsed) {
     this.stageManager.update(dt, elapsed);
 
-    // Subtle gentle idle swaying of puppet strings
-    this.currentPuppetActors.forEach(({ puppet, mesh, baseX }) => {
+    const now = performance.now();
+    const sceneElapsed = this.sceneStartTime > 0 ? (now - this.sceneStartTime) / 1000 : 0;
+    const sceneData = RAMAYANA_SCENES[this.currentIndex];
+    const durationSec = (sceneData?.durationMs || 16000) / (1000 * this.speed);
+    const sceneProgress = Math.min(1.0, sceneElapsed / durationSec);
+
+    // Entrance duration: 1.8 seconds with ease-out quad interpolation
+    const entranceDuration = 1.8;
+    const isEntering = sceneElapsed < entranceDuration;
+    const enterT = isEntering ? Math.min(1.0, sceneElapsed / entranceDuration) : 1.0;
+    const easeT = 1.0 - (1.0 - enterT) * (1.0 - enterT);
+
+    this.currentPuppetActors.forEach((actor, idx) => {
+      const { puppet, mesh, startX, startY, targetX, targetY, targetRotY, action } = actor;
+
       puppet.update(dt);
-      mesh.position.y = puppet.position.y;
-      mesh.rotation.z = puppet.rotation.z;
+
+      if (isEntering) {
+        // Smoothly walk in from wings with rhythmic string step bounce
+        mesh.position.x = startX + (targetX - startX) * easeT;
+        const stepBounce = Math.abs(Math.sin(sceneElapsed * 10.0 + idx)) * 0.06;
+        mesh.position.y = (startY + (targetY - startY) * easeT) + stepBounce;
+        mesh.rotation.z = Math.sin(sceneElapsed * 10.0 + idx) * 0.08;
+        mesh.rotation.y = (targetX > startX ? 0.35 : -0.35) * (1.0 - easeT) + targetRotY * easeT;
+      } else {
+        // Arrived at mark: execute full choreographed performance
+        mesh.position.x = targetX;
+        mesh.rotation.y = targetRotY;
+
+        // Specialized character action & gestures
+        if (typeof puppet.animateChoreography === 'function') {
+          puppet.animateChoreography(action, sceneProgress, elapsed);
+        }
+
+        mesh.position.y = puppet.position.y;
+        mesh.rotation.z = puppet.rotation.z;
+        mesh.rotation.x = puppet.rotation.x;
+      }
     });
   }
 

@@ -96,6 +96,127 @@ export class RamayanaKathputli extends KathputliRig {
     }
   }
 
+  setArmAngles(leftZ, rightZ, rightY = 0) {
+    if (this.leftArmMesh) {
+      this.leftArmMesh.rotation.z = leftZ;
+    }
+    if (this.rightArmMesh) {
+      this.rightArmMesh.rotation.z = rightZ;
+      this.rightArmMesh.rotation.y = rightY;
+    }
+  }
+
+  animateChoreography(action, sceneProgress, t) {
+    // Dynamic pose and string physics choreography
+    switch (action) {
+      case 'narrate':
+        // Sutradhar gestures with right arm, head nods on rhythm
+        this.headTilt = Math.sin(t * 5.0) * 0.18;
+        this.setArmAngles(0.2, -0.65 + Math.sin(t * 6.0) * 0.35);
+        this.skirtAngularVelocity = Math.sin(t * 4.0) * 1.2;
+        break;
+
+      case 'shoot':
+      case 'aim-bow':
+      case 'brahmastra':
+      case 'astra-shoot':
+        // Aiming bow: raise left arm, draw right string back
+        if (sceneProgress < 0.4) {
+          // Drawing string tension
+          this.setArmAngles(1.15, -0.85);
+          this.headTilt = -0.15;
+          this.rotation.y = 0.35;
+        } else if (sceneProgress < 0.55) {
+          // Release arrow follow-through!
+          this.setArmAngles(1.25, 0.2);
+          this.headTilt = 0.12;
+          this.skirtAngularVelocity = 2.5;
+        } else {
+          // Victorious stance
+          this.setArmAngles(0.35, -0.35);
+          this.headTilt = 0;
+          this.rotation.y = 0.1;
+        }
+        break;
+
+      case 'fly-ocean':
+      case 'mountain-lift':
+      case 'leap':
+        // Hanuman cosmic leap & flight
+        this.position.y = 1.25 + Math.sin(t * 4.0) * 0.18;
+        this.rotation.x = -0.22;
+        this.rotation.z = -0.18;
+        this.setArmAngles(1.3, 1.4); // Both arms raised holding sky/mountain
+        this.skirtFlare = 0.6;
+        break;
+
+      case 'clash':
+      case 'fight':
+      case 'intrude':
+      case 'abduct':
+      case 'rage':
+        // Dynamic combat lunges
+        this.position.y = 1.1 + Math.abs(Math.sin(t * 8.0)) * 0.05;
+        this.rotation.z = Math.sin(t * 6.0) * 0.15;
+        this.setArmAngles(0.4 + Math.sin(t * 10.0) * 0.5, -0.5 - Math.cos(t * 10.0) * 0.5);
+        this.skirtAngularVelocity = 4.0;
+        break;
+
+      case 'jaimala':
+      case 'garland':
+        // Sita gently lifting hands to garland Ram
+        this.position.y = 1.08;
+        this.setArmAngles(0.9, -0.9);
+        this.headTilt = 0.2;
+        break;
+
+      case 'charan-vandana':
+      case 'sharan':
+      case 'kneel':
+      case 'paduka-return':
+        // Prostrating at Ram's feet in deep devotion
+        this.position.y = 0.88;
+        this.headTilt = 0.48;
+        this.rotation.x = 0.38;
+        this.setArmAngles(0.12, -0.12);
+        break;
+
+      case 'tilak':
+      case 'bless':
+      case 'setu-bless':
+      case 'coronation':
+      case 'grief-relief':
+        // Protective Abhaya Mudra blessing
+        this.position.y = 1.12;
+        this.headTilt = -0.1;
+        this.setArmAngles(0.25, -1.1, 0.4); // Right hand raised in divine blessing
+        break;
+
+      case 'celebrate':
+      case 'diya-light':
+        // Festive Spin Chakkar pirouette
+        this.position.y = 1.14 + Math.sin(t * 7.0) * 0.04;
+        this.skirtAngularVelocity = 6.0;
+        this.setArmAngles(0.7, -0.7);
+        this.headTilt = -0.15;
+        break;
+
+      case 'mourn':
+      case 'weep':
+      case 'murchha':
+      case 'anxious':
+        // Grief / fallen
+        this.position.y = 0.95;
+        this.headTilt = 0.42;
+        this.setArmAngles(-0.1, 0.1);
+        break;
+
+      default:
+        // Gentle traditional breathing string bob
+        this.setArmAngles(0.25 + Math.sin(t * 2.0) * 0.08, -0.25 - Math.sin(t * 2.0) * 0.08);
+    }
+  }
+
   // Enhanced visual mesh with cultural accessories (mukut, accessories, etc.)
   buildThreeMesh(THREE) {
     const group = super.buildThreeMesh(THREE);
@@ -162,7 +283,45 @@ export class RamayanaKathputli extends KathputliRig {
       }
     }
 
-    // 2. Bow & Quiver (Kodanda / Pinaka)
+    // 2. Rajasthani Painted Almond Eyes (Mrug Nayani) & Facial Art
+    if (this.headMesh) {
+      const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+      const eyeBlackMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+      const tilakMat = new THREE.MeshBasicMaterial({ color: 0xD32F2F });
+
+      for (let side of [-1, 1]) {
+        const eyeWhite = new THREE.Mesh(new THREE.BoxGeometry(0.024, 0.014, 0.005), eyeWhiteMat);
+        eyeWhite.position.set(side * 0.022, 0.07, 0.046);
+        eyeWhite.rotation.z = side * -0.15;
+        const eyePupil = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.012, 0.006), eyeBlackMat);
+        eyePupil.position.set(side * 0.022, 0.07, 0.048);
+        this.headMesh.add(eyeWhite);
+        this.headMesh.add(eyePupil);
+
+        // Bold Kohl arched eyebrow
+        const brow = new THREE.Mesh(new THREE.BoxGeometry(0.026, 0.004, 0.005), eyeBlackMat);
+        brow.position.set(side * 0.022, 0.082, 0.046);
+        brow.rotation.z = side * -0.25;
+        this.headMesh.add(brow);
+      }
+
+      // Sacred Forehead Tilak / Bindi
+      const tilak = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.018, 0.005), tilakMat);
+      tilak.position.set(0, 0.082, 0.047);
+      this.headMesh.add(tilak);
+
+      // Dasharath's Flowing White Royal Beard
+      if (this.characterId === 'dasharath') {
+        const beardGeo = new THREE.ConeGeometry(0.038, 0.12, 8);
+        const beardMat = new THREE.MeshStandardMaterial({ color: 0xF5F5F5, roughness: 0.9 });
+        const beard = new THREE.Mesh(beardGeo, beardMat);
+        beard.position.set(0, 0.0, 0.04);
+        beard.rotation.x = -Math.PI / 8;
+        this.headMesh.add(beard);
+      }
+    }
+
+    // 3. Bow & Quiver (Kodanda / Pinaka)
     if (this.bowInHand && this.leftArmMesh) {
       const bowCurve = new THREE.CubicBezierCurve3(
         new THREE.Vector3(0, -0.18, 0.08),
@@ -174,6 +333,29 @@ export class RamayanaKathputli extends KathputliRig {
       const bowMesh = new THREE.Mesh(bowGeo, goldMat);
       bowMesh.position.set(0.01, -0.05, 0);
       this.leftArmMesh.add(bowMesh);
+    }
+
+    // 4. Ravan's Curved Chandrahas Sword
+    if (this.characterId === 'ravan' && this.rightArmMesh) {
+      const swordCurve = new THREE.CubicBezierCurve3(
+        new THREE.Vector3(0, -0.05, 0.05),
+        new THREE.Vector3(0, 0.15, 0.12),
+        new THREE.Vector3(0, 0.28, 0.18),
+        new THREE.Vector3(0, 0.38, 0.12)
+      );
+      const swordGeo = new THREE.TubeGeometry(swordCurve, 12, 0.012, 6, false);
+      const sword = new THREE.Mesh(swordGeo, goldMat);
+      this.rightArmMesh.add(sword);
+    }
+
+    // 5. Sutradhar's Traditional Dholak
+    if (this.characterId === 'sutradhar' && this.rightArmMesh) {
+      const dholakGeo = new THREE.CylinderGeometry(0.035, 0.035, 0.14, 10);
+      const dholakMat = new THREE.MeshStandardMaterial({ color: 0x8D5B36, roughness: 0.8 });
+      const dholak = new THREE.Mesh(dholakGeo, dholakMat);
+      dholak.position.set(0, -0.12, 0.06);
+      dholak.rotation.z = Math.PI / 2;
+      this.rightArmMesh.add(dholak);
     }
 
     return group;
