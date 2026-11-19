@@ -11,7 +11,8 @@ const tests = [
   'tests/strings.spec.js',
   'tests/controls.spec.js',
   'tests/kframes.spec.js',
-  'tests/acts-kathputli.spec.js'
+  'tests/acts-kathputli.spec.js',
+  'tests/ramayana.spec.js'
 ];
 
 let allPassed = true;

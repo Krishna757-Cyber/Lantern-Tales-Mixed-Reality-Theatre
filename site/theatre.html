@@ -101,6 +101,7 @@
         <button class="act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-[#F4E8D0] hover:bg-[#F4E8D0]/10" data-act="sapera">🐍 Sapera</button>
         <button class="act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-[#F4E8D0] hover:bg-[#F4E8D0]/10" data-act="amarsingh">🛡️ Amar Singh</button>
         <button class="act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-[#F4E8D0] hover:bg-[#F4E8D0]/10" data-act="mela">🏮 Mela</button>
+        <button class="act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-[#F4E8D0] hover:bg-[#F4E8D0]/10 border border-[#E3A018]/40 hover:border-[#E3A018]" data-act="ramayana">📜 Ramayana</button>
       </div>
 
       <!-- Marigold Taal Meter -->
@@ -161,6 +162,7 @@
   import { RangManchHall } from '../src/theatre/hall.js';
   import { TableTheatre } from '../src/theatre/tableTheatre.js';
   import { TheatreTransition } from '../src/theatre/transition.js';
+  import { RamayanaKathaPlayer } from '../src/theatre/ramayana-katha.js';
 
   const canvas = document.getElementById('theatre-canvas');
   const container = document.getElementById('theatre-stage-wrap');
@@ -177,6 +179,7 @@
 
     // Initial Rang Manch Hall Environment
     const hall = new RangManchHall(THREE, scene);
+    let ramayanaPlayer = null;
     
     // Puppet Rig & Controllers
     const puppet = new KathputliRig({ name: 'Anarkali', scale: 1.0 });
@@ -245,11 +248,29 @@
     // Act buttons
     document.querySelectorAll('.act-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        const actId = btn.dataset.act;
         document.querySelectorAll('.act-btn').forEach(b => {
           b.className = 'act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-[#F4E8D0] hover:bg-[#F4E8D0]/10';
         });
         btn.className = 'act-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-[#E3A018] text-[#0B0A10] font-bold';
-        voice.playSqueak('greet', 0);
+
+        if (actId === 'ramayana') {
+          if (puppetMesh) scene.remove(puppetMesh);
+          if (!ramayanaPlayer) {
+            ramayanaPlayer = new RamayanaKathaPlayer(THREE, scene, hall, console.log);
+            ramayanaPlayer.mountUI(container);
+          }
+          ramayanaPlayer.play();
+        } else {
+          if (ramayanaPlayer) {
+            ramayanaPlayer.teardown();
+            ramayanaPlayer = null;
+          }
+          if (puppetMesh && !scene.children.includes(puppetMesh)) {
+            scene.add(puppetMesh);
+          }
+          voice.playSqueak('greet', 0);
+        }
       });
     });
 
@@ -270,7 +291,11 @@
       const elapsed = clock.elapsedTime;
 
       hall.update(dt, elapsed);
-      puppet.update(dt);
+      if (ramayanaPlayer && !ramayanaPlayer.isDisposed) {
+        ramayanaPlayer.update(dt, elapsed);
+      } else {
+        puppet.update(dt);
+      }
       renderer.render(scene, camera);
     }
     animate();

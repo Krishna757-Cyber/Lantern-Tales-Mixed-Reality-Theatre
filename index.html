@@ -23,7 +23,7 @@
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link id="google-fonts-link" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link id="google-fonts-link" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;600&family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Serif+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
 
 <!-- Tailwind & External Libraries -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -377,6 +377,7 @@ tailwind.config = {
           <select id="select-theatre-immersion" class="bg-transparent text-xs font-mono text-parchment focus:outline-none cursor-pointer">
             <option value="hall" class="bg-ink text-parchment">🏛️ Haveli Courtyard (Full VR)</option>
             <option value="table" class="bg-ink text-parchment">🛋️ Tabletop Proscenium (MR)</option>
+            <option value="ramayana" class="bg-ink text-parchment">📜 Ramayana Katha (Performance)</option>
           </select>
         </div>
 
@@ -389,13 +390,14 @@ tailwind.config = {
 
       <!-- Bottom Interactive Toolbar -->
       <div class="absolute bottom-4 left-4 right-4 flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
-        <!-- 5 Folk Acts -->
+        <!-- 5 Folk Acts + Ramayana Katha -->
         <div class="flex items-center gap-1.5 bg-black/70 backdrop-blur-md p-1.5 rounded-2xl border border-parchment/15 overflow-x-auto max-w-full">
           <button class="theatre-act-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-amber text-ink font-bold shrink-0" data-act="anarkali">💃 Anarkali</button>
           <button class="theatre-act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-parchment hover:bg-parchment/10 shrink-0" data-act="ghodi">🐎 Ghodi</button>
           <button class="theatre-act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-parchment hover:bg-parchment/10 shrink-0" data-act="sapera">🐍 Sapera</button>
           <button class="theatre-act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-parchment hover:bg-parchment/10 shrink-0" data-act="amarsingh">🛡️ Amar Singh</button>
           <button class="theatre-act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-parchment hover:bg-parchment/10 shrink-0" data-act="mela">🏮 Mela</button>
+          <button class="theatre-act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-parchment hover:bg-parchment/10 shrink-0 border border-amber/40 hover:border-amber font-semibold" data-act="ramayana">📜 Ramayana</button>
         </div>
 
         <!-- Quick Performance Triggers -->
@@ -484,7 +486,7 @@ tailwind.config = {
       <span class="text-[10px] uppercase font-mono font-bold tracking-widest opacity-75">Cultural Stewardship</span>
       <h4 class="font-display font-bold text-base mt-1">Preserved by the Bhat Community</h4>
       <p class="text-xs leading-relaxed opacity-90 mt-2">
-        Documented by Sangeet Natak Akademi and Rupayan Sansthan. Traditional Kathputli performances feature secular folk epics and court dances; deities are strictly not represented.
+        Documented by Sangeet Natak Akademi and Rupayan Sansthan. Traditional Kathputli performances feature secular folk epics and court dances; our devotional Ramayana Katha draws upon the sacred Valmiki Ramayana and Sant Tulsidas’s Ramcharitmanas traditions, adapted into dignified Rajasthani wooden puppetry. Regional variations exist across India.
       </p>
       <div class="mt-3 pt-3 border-t border-ink/20 flex items-center justify-between text-[11px] font-mono">
         <span>Procedural Boli Reed</span>

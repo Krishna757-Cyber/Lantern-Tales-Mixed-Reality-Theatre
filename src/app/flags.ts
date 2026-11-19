@@ -8,6 +8,7 @@ export interface FeatureFlags {
   depthOcclusion: boolean;
   gazeLantern: boolean;
   theatre: boolean;
+  ramayanaKatha: boolean;
   backstageWorkshop: boolean;
   duetMultiplayer: boolean;
   proceduralVoice: boolean;
@@ -27,6 +28,7 @@ export const FLAGS: FeatureFlags = {
   depthOcclusion: true,
   gazeLantern: true,
   theatre: queryTheatre || true, // Enabled or controllable via ?theatre=1
+  ramayanaKatha: true,
   backstageWorkshop: true,
   duetMultiplayer: true,
   proceduralVoice: true,

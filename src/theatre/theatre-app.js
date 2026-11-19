@@ -17,6 +17,8 @@ import { RangManchHall } from './hall.js';
 import { TableTheatre } from './tableTheatre.js';
 import { TheatreTransition } from './transition.js';
 import { BackstageWorkshop } from '../workshop/workshop.js';
+import { FLAGS } from '../app/flags.js';
+import { RamayanaKathaPlayer } from './ramayana-katha.js';
 
 export let activeTheatre = null;
 
@@ -41,6 +43,7 @@ export function initTheatreView(toastFn = null) {
     const hall = new RangManchHall(THREE, scene);
     let table = null;
     let isVRMode = true;
+    let ramayanaPlayer = null;
 
     // Puppet
     let currentPuppet = new AnarkaliDancer({ scale: 1.0 });
@@ -98,6 +101,11 @@ export function initTheatreView(toastFn = null) {
     // Immersion toggle dropdown
     document.getElementById('select-theatre-immersion')?.addEventListener('change', (e) => {
       const mode = e.target.value;
+      if (mode === 'ramayana') {
+        const ramBtn = document.querySelector('.theatre-act-btn[data-act="ramayana"]');
+        if (ramBtn) ramBtn.click();
+        return;
+      }
       transition.fadeDissolve(isVRMode ? 'VR' : 'MR', mode, 600, () => {
         if (mode === 'table') {
           isVRMode = false;
@@ -121,10 +129,12 @@ export function initTheatreView(toastFn = null) {
       const icon = document.getElementById('theatre-audio-icon');
       if (isAudioPlaying) {
         rhythm.start();
+        ramayanaPlayer?.audioManager.setMuted(false);
         if (icon) icon.textContent = '🔊';
         if (typeof toastFn === 'function') toastFn('🥁 Dholak & Manjira rhythm started.');
       } else {
         rhythm.stop();
+        ramayanaPlayer?.audioManager.setMuted(true);
         if (icon) icon.textContent = '🔇';
         if (typeof toastFn === 'function') toastFn('🔇 Rhythm paused.');
       }
@@ -156,6 +166,11 @@ export function initTheatreView(toastFn = null) {
         badge: 'Active Act • Mela Night',
         title: 'The Desert Fair Finale',
         desc: 'Festive carnival lights kindle; three puppets perform a duet with guest or ghost partner amid a marigold shower.'
+      },
+      ramayana: {
+        badge: 'Active Act • Ramayana Katha',
+        title: 'Ramayana Katha — The Complete Folk Performance',
+        desc: 'Auto-playing 7-chapter epic told in 38 scenes with Rajasthani wooden string puppets, procedural backdrops, bilingual narration, and classical taals.'
       }
     };
 
@@ -175,6 +190,26 @@ export function initTheatreView(toastFn = null) {
           if (badgeEl) badgeEl.textContent = meta.badge;
           if (titleEl) titleEl.textContent = meta.title;
           if (descEl) descEl.textContent = meta.desc;
+        }
+
+        // Special handling for Ramayana Katha
+        if (actId === 'ramayana') {
+          if (puppetMesh) scene.remove(puppetMesh);
+          if (!ramayanaPlayer) {
+            ramayanaPlayer = new RamayanaKathaPlayer(THREE, scene, hall, toastFn);
+            ramayanaPlayer.mountUI(container);
+          }
+          ramayanaPlayer.play();
+          if (typeof toastFn === 'function') {
+            toastFn('📜 Starting Ramayana Katha — The Living Folk Lore');
+          }
+          return;
+        } else {
+          // Teardown Ramayana player when switching back to individual acts
+          if (ramayanaPlayer) {
+            ramayanaPlayer.teardown();
+            ramayanaPlayer = null;
+          }
         }
 
         // Swap puppet model
@@ -259,11 +294,25 @@ export function initTheatreView(toastFn = null) {
         table.update(dt, elapsed);
       }
 
-      currentPuppet.update(dt);
+      if (ramayanaPlayer && !ramayanaPlayer.isDisposed) {
+        ramayanaPlayer.update(dt, elapsed);
+      } else {
+        currentPuppet.update(dt);
+      }
       renderer.render(scene, camera);
     }
     animate();
     hall.curtain.open();
+
+    // Route change cleanup
+    window.addEventListener('viewchange', (e) => {
+      if (e.detail?.view !== 'theatre') {
+        if (ramayanaPlayer && !ramayanaPlayer.isDisposed) {
+          ramayanaPlayer.pause();
+          ramayanaPlayer.audioManager.stopAll();
+        }
+      }
+    });
 
     activeTheatre = {
       hall,

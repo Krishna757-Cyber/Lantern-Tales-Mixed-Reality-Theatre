@@ -11,6 +11,7 @@ export const FLAGS = {
   depthOcclusion: true,
   gazeLantern: true,
   theatre: queryTheatre || true,
+  ramayanaKatha: true,
   backstageWorkshop: true,
   duetMultiplayer: true,
   proceduralVoice: true,
