@@ -246,27 +246,91 @@ export class RamayanaKathputli extends KathputliRig {
         this.headMesh.add(baseMesh);
         this.headMesh.add(peakMesh);
       } else if (this.crownStyle === 'ravan_10') {
-        // Stylised 10-face tiered golden mukut
-        const crownBase = new THREE.CylinderGeometry(0.055, 0.06, 0.08, 12);
-        const baseMesh = new THREE.Mesh(crownBase, goldMat);
-        baseMesh.position.y = 0.13;
-        this.headMesh.add(baseMesh);
+        // Dashanana — 10 Heads of Ravan: 1 Central Main Head + 9 Flanking Heads arranged horizontally with golden crowns and almond eyes
+        const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+        const eyeBlackMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+        const tilakMat = new THREE.MeshBasicMaterial({ color: 0xD32F2F });
+        const mustMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
 
-        // Tiered mini-faces arrayed on a golden crescent arch
-        const archGeo = new THREE.TorusGeometry(0.12, 0.015, 8, 20, Math.PI);
-        const archMesh = new THREE.Mesh(archGeo, goldMat);
-        archMesh.position.set(0, 0.17, 0);
-        archMesh.rotation.z = Math.PI;
-        this.headMesh.add(archMesh);
+        // Central King Mukut on main head
+        const mainBase = new THREE.CylinderGeometry(0.052, 0.062, 0.08, 12);
+        const mainPeak = new THREE.ConeGeometry(0.045, 0.14, 10);
+        const mbMesh = new THREE.Mesh(mainBase, goldMat);
+        const mpMesh = new THREE.Mesh(mainPeak, goldMat);
+        mbMesh.position.y = 0.14;
+        mpMesh.position.y = 0.23;
+        this.headMesh.add(mbMesh);
+        this.headMesh.add(mpMesh);
 
-        // 9 auxiliary crowned miniature heads (4 left, 1 center top, 4 right)
-        for (let i = -4; i <= 4; i++) {
-          if (i === 0) continue;
-          const miniHead = new THREE.Mesh(new THREE.SphereGeometry(0.018, 6, 6), woodMat);
-          const angle = (i / 5) * (Math.PI * 0.45);
-          miniHead.position.set(Math.sin(angle) * 0.12, 0.17 + Math.cos(angle) * 0.04, 0);
-          this.headMesh.add(miniHead);
-        }
+        // Solid golden curved shoulder armature supporting the 9 extra heads
+        const armatureCurve = new THREE.CubicBezierCurve3(
+          new THREE.Vector3(-0.46, 0.06, -0.04),
+          new THREE.Vector3(-0.24, 0.11, 0.0),
+          new THREE.Vector3(0.24, 0.11, 0.0),
+          new THREE.Vector3(0.46, 0.06, -0.04)
+        );
+        const armatureGeo = new THREE.TubeGeometry(armatureCurve, 24, 0.014, 6, false);
+        const armatureMesh = new THREE.Mesh(armatureGeo, goldMat);
+        this.headMesh.add(armatureMesh);
+
+        // 9 Auxiliary Heads: 4 on the left side, 1 top crest, 4 on the right side
+        const headOffsets = [
+          { x: -0.42, y: 0.05, z: -0.04, scale: 0.65 },
+          { x: -0.32, y: 0.07, z: -0.02, scale: 0.70 },
+          { x: -0.22, y: 0.08, z: 0.00,  scale: 0.76 },
+          { x: -0.12, y: 0.09, z: 0.01,  scale: 0.82 },
+          { x: 0.00,  y: 0.29, z: 0.01,  scale: 0.60 }, // Donkey / Top 10th Crest Head
+          { x: 0.12,  y: 0.09, z: 0.01,  scale: 0.82 },
+          { x: 0.22,  y: 0.08, z: 0.00,  scale: 0.76 },
+          { x: 0.32,  y: 0.07, z: -0.02, scale: 0.70 },
+          { x: 0.42,  y: 0.05, z: -0.04, scale: 0.65 }
+        ];
+
+        headOffsets.forEach((ho, i) => {
+          const hGroup = new THREE.Group();
+          hGroup.scale.set(ho.scale, ho.scale, ho.scale);
+          hGroup.position.set(ho.x, ho.y, ho.z);
+
+          // Carved Wood Head
+          const woodHead = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.042, 0.038, 0.10, 10),
+            woodMat
+          );
+          hGroup.add(woodHead);
+
+          // Golden Crown on each head
+          const crown = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.08, 8), goldMat);
+          crown.position.y = 0.08;
+          hGroup.add(crown);
+
+          // Nose
+          const nose = new THREE.Mesh(new THREE.ConeGeometry(0.01, 0.025, 6), woodMat);
+          nose.position.set(0, 0, 0.042);
+          nose.rotation.x = Math.PI / 2;
+          hGroup.add(nose);
+
+          // Expressive Kohl Eyes on each of the 9 heads
+          for (let side of [-1, 1]) {
+            const ew = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.010, 0.004), eyeWhiteMat);
+            ew.position.set(side * 0.018, 0.016, 0.040);
+            const ep = new THREE.Mesh(new THREE.BoxGeometry(0.009, 0.009, 0.005), eyeBlackMat);
+            ep.position.set(side * 0.018, 0.016, 0.041);
+            hGroup.add(ew);
+            hGroup.add(ep);
+          }
+
+          // Red Tilak
+          const tk = new THREE.Mesh(new THREE.BoxGeometry(0.006, 0.014, 0.004), tilakMat);
+          tk.position.set(0, 0.025, 0.041);
+          hGroup.add(tk);
+
+          // Regal Moustache (Mooch) on each fierce face
+          const mustache = new THREE.Mesh(new THREE.BoxGeometry(0.032, 0.006, 0.005), mustMat);
+          mustache.position.set(0, -0.016, 0.042);
+          hGroup.add(mustache);
+
+          this.headMesh.add(hGroup);
+        });
       } else if (this.crownStyle === 'monkey') {
         // Golden ornate mukut for Hanuman
         const mukutGeo = new THREE.ConeGeometry(0.04, 0.09, 8);
