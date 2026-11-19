@@ -3,10 +3,7 @@
   "outputDirectory": ".",
   "functions": {
     "api/index.js": {
-      "includeFiles": [
-        "server/data/**",
-        "src/story/acts/**"
-      ]
+      "includeFiles": "{server/data/**,src/story/acts/**}"
     }
   },
   "rewrites": [
