@@ -5,6 +5,7 @@
   "main": "server/server.js",
   "type": "module",
   "scripts": {
+    "build": "echo 'Ready'",
     "start": "node server/server.js",
     "dev": "node server/server.js",
     "test": "node tests/run-all.js"

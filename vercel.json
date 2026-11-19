@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": ".",
+  "functions": {
+    "api/index.js": {
+      "includeFiles": [
+        "server/data/**",
+        "src/story/acts/**"
+      ]
+    }
+  },
+  "rewrites": [
+    { "source": "/theatre", "destination": "/site/theatre.html" },
+    { "source": "/api/(.*)", "destination": "/api/index.js" }
+  ]
+}
