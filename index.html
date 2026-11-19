@@ -271,15 +271,39 @@ tailwind.config = {
 <!-- ==================================================== PLAY ==================================================== -->
 <section id="view-play" class="view" aria-label="Shadow theatre stage">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+
+<!-- Ramayana Katha Discovery Banner -->
+<div class="mb-4 p-3.5 rounded-2xl border border-amber/30 bg-gradient-to-r from-amber/20 via-vermilion/20 to-amber/10 flex items-center justify-between flex-wrap gap-2 shadow-lg">
+  <div class="flex items-center gap-2.5">
+    <span class="text-2xl animate-pulse">📜</span>
+    <div class="text-xs">
+      <span class="font-bold text-amber tracking-wide uppercase bg-amber/20 px-2 py-0.5 rounded-full border border-amber/40">Grand Feature</span>
+      <span class="text-parchment font-medium ml-1.5">38-Scene Autonomous Ramayana Kathputli Katha & 10-Headed Ravan</span>
+    </div>
+  </div>
+  <button data-view="theatre" class="nav-link px-4 py-2 rounded-xl bg-amber text-ink font-bold text-xs hover:opacity-90 transition flex items-center gap-1.5 shadow-md">
+    <span>Watch Epic Ramayana Katha ▶</span>
+  </button>
+</div>
+
 <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
-<div class="flex items-center gap-3">
+<div class="flex items-center flex-wrap gap-2.5">
 <button id="btn-calibrate" class="btn-ghost text-xs px-3 py-2 rounded-lg" title="Recenter seated stage">◎ Recenter</button>
 <button id="toggle-corner" class="btn-ghost text-xs px-3 py-2 rounded-lg" role="switch" aria-checked="true">Room Corner: ON</button>
 <button id="btn-drop-pebble" class="btn-ghost text-xs px-3 py-2 rounded-lg text-amber font-mono">✊ Drop Pebble</button>
 <button id="btn-fly-crow" class="btn-ghost text-xs px-3 py-2 rounded-lg text-amber font-mono">🪽 Fly Crow</button>
+<button id="btn-stage-audio" class="btn-ghost text-xs px-3 py-2 rounded-lg border border-parchment/15 flex items-center gap-1.5" title="Toggle Folk Web Audio Sound FX"><span id="stage-audio-icon">🔊</span> Sound FX: ON</button>
+<button id="btn-toggle-cam-stage" class="btn-ghost text-xs px-3 py-2 rounded-lg border border-parchment/15 flex items-center gap-1.5 text-amber" title="Enable on-device MediaPipe webcam hand tracking"><span id="cam-icon">📷</span> <span id="cam-status-text">Webcam: OFF</span></button>
+<select id="select-ambient-mode" class="btn-ghost text-xs px-2.5 py-2 rounded-lg border border-parchment/15 bg-ink text-parchment cursor-pointer" title="Switch Atmospheric Stage Lighting">
+  <option value="gold">🏮 Haveli Amber</option>
+  <option value="moon">🌙 Midnight Blue</option>
+  <option value="saffron">🌅 Saffron Dawn</option>
+</select>
+<button id="btn-snapshot-stage" class="btn-ghost text-xs px-3 py-2 rounded-lg text-amber border border-amber/30 flex items-center gap-1" title="Capture & download high-res stage image">📸 Snapshot</button>
+<button id="btn-cinema-mode" class="btn-ghost text-xs px-3 py-2 rounded-lg border border-parchment/15" title="Toggle Fullscreen Cinema Mode (C)">⛶ Cinema</button>
 </div>
 <div class="flex items-center gap-2">
-<span id="pose-badge" class="bg-parchment/10 border border-parchment/20 rounded-full px-4 py-2 text-xs font-mono">Pose 1 • Kindle</span>
+<span id="pose-badge" class="bg-parchment/10 border border-parchment/20 rounded-full px-4 py-2 text-xs font-mono text-amber">Pose 1 • Kindle</span>
 </div>
 </div>
 

@@ -8,6 +8,7 @@ import { POSES, classifyPose } from './recognizer/poses.js';
 import { VirtualInput, initVirtualInput, setVirtualPose } from './input/virtual.js';
 import { WebcamInput, requestWebcamStream, stopWebcamStream } from './input/webcam.js';
 import { Stage, initStage, updateStage, drawStage, dropPebble, flyCrow } from './stage/renderer.js';
+import { StageAudio } from './stage/sound-fx.js';
 import { Tour, startTour, stopTour, updateTour } from './tour/director.js';
 import { Room, initRoomToggles, checkXRAvailability, updateRoomBadges } from './xr/room.js';
 import { initHeroScene } from './hero/hero-scene.js';
@@ -63,6 +64,18 @@ function selectPose(poseNum) {
   if (hudPose) hudPose.textContent = poseNum;
   const badge = document.getElementById('pose-badge');
   if (badge) badge.textContent = `Pose ${poseNum} • ${POSES[poseNum]?.name || 'Kindle'}`;
+
+  // Procedural Web Audio folk acoustic feedback
+  switch (poseNum) {
+    case 1: StageAudio.playKindle(); break;
+    case 2: StageAudio.playBeak(); break;
+    case 3: StageAudio.playPebble(); break;
+    case 4: StageAudio.playGuide(); break;
+    case 5: StageAudio.playWings(); break;
+    case 6: StageAudio.playSunrise(); break;
+    case 7: StageAudio.playMeet(); break;
+    case 8: StageAudio.playBloom(); break;
+  }
 }
 
 // FPS counter
@@ -235,12 +248,110 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // Pebble and fly triggers
+  // Pebble and fly triggers with sound
   const pebbleBtn = document.getElementById('btn-drop-pebble');
-  if (pebbleBtn) pebbleBtn.addEventListener('click', dropPebble);
+  if (pebbleBtn) {
+    pebbleBtn.addEventListener('click', () => {
+      dropPebble();
+      StageAudio.playPebble();
+    });
+  }
 
   const flyBtn = document.getElementById('btn-fly-crow');
-  if (flyBtn) flyBtn.addEventListener('click', flyCrow);
+  if (flyBtn) {
+    flyBtn.addEventListener('click', () => {
+      flyCrow();
+      StageAudio.playWings();
+    });
+  }
+
+  // Audio FX toggle button on stage
+  const stageAudioBtn = document.getElementById('btn-stage-audio');
+  if (stageAudioBtn) {
+    stageAudioBtn.addEventListener('click', () => {
+      const active = StageAudio.toggle();
+      const icon = document.getElementById('stage-audio-icon');
+      if (icon) icon.textContent = active ? '🔊' : '🔇';
+      stageAudioBtn.innerHTML = `<span id="stage-audio-icon">${active ? '🔊' : '🔇'}</span> Sound FX: ${active ? 'ON' : 'OFF'}`;
+      toast(active ? '🔊 Folk sound effects enabled' : '🔇 Folk sound effects muted');
+    });
+  }
+
+  // Stage Toolbar Camera Toggle
+  const toggleCamStageBtn = document.getElementById('btn-toggle-cam-stage');
+  if (toggleCamStageBtn) {
+    toggleCamStageBtn.addEventListener('click', async () => {
+      if (!WebcamInput.active) {
+        const ok = await requestWebcamStream();
+        if (ok) {
+          toggleCamStageBtn.innerHTML = '<span>📷</span> <span id="cam-status-text">Webcam: ON</span>';
+          toggleCamStageBtn.classList.add('bg-amber', 'text-ink');
+          toast('📷 On-device webcam hand tracking active!');
+        } else {
+          toast('Camera access declined — virtual mouse active', 'warn');
+        }
+      } else {
+        stopWebcamStream();
+        toggleCamStageBtn.innerHTML = '<span>📷</span> <span id="cam-status-text">Webcam: OFF</span>';
+        toggleCamStageBtn.classList.remove('bg-amber', 'text-ink');
+        toast('🖱️ Switched to virtual mouse control');
+      }
+    });
+  }
+
+  // Ambient lighting mood selector
+  const selectAmbient = document.getElementById('select-ambient-mode');
+  if (selectAmbient) {
+    selectAmbient.addEventListener('change', (e) => {
+      Stage.ambientMode = e.target.value;
+      toast(`🏮 Lighting changed: ${e.target.options[e.target.selectedIndex].text}`);
+    });
+  }
+
+  // Snapshot stage button
+  const snapshotBtn = document.getElementById('btn-snapshot-stage');
+  if (snapshotBtn) {
+    snapshotBtn.addEventListener('click', () => {
+      if (!stageCanvas) return;
+      try {
+        const snap = document.createElement('canvas');
+        snap.width = stageCanvas.width;
+        snap.height = stageCanvas.height;
+        const sCtx = snap.getContext('2d');
+        sCtx.drawImage(stageCanvas, 0, 0);
+
+        // Watermark
+        sCtx.save();
+        sCtx.font = 'bold 16px serif';
+        sCtx.fillStyle = 'rgba(227, 160, 24, 0.9)';
+        sCtx.shadowColor = '#000';
+        sCtx.shadowBlur = 8;
+        sCtx.fillText('🏮 Lantern Tales — Mixed Reality Theatre', 28, snap.height - 24);
+        sCtx.font = '12px monospace';
+        sCtx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        sCtx.fillText('Meta VR Start Competition 2026', snap.width - 240, snap.height - 24);
+        sCtx.restore();
+
+        const link = document.createElement('a');
+        link.download = `lantern-tales-shadow-theatre-${Date.now()}.png`;
+        link.href = snap.toDataURL('image/png');
+        link.click();
+        toast('📸 Stage snapshot captured and saved!');
+      } catch (err) {
+        toast('Unable to export snapshot', 'warn');
+      }
+    });
+  }
+
+  // Cinema Mode button
+  const cinemaBtn = document.getElementById('btn-cinema-mode');
+  if (cinemaBtn) {
+    cinemaBtn.addEventListener('click', () => {
+      document.body.classList.toggle('cinema');
+      setTimeout(sizeStage, 100);
+      toast(document.body.classList.contains('cinema') ? '⛶ Cinema letterbox active (Press C or Esc to exit)' : 'Exited cinema mode');
+    });
+  }
 
   // Smoke test button
   const smokeBtn = document.getElementById('btn-smoke');

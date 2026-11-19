@@ -6,10 +6,18 @@
   cursor: crosshair;
   touch-action: none;
   background: radial-gradient(circle at 50% 50%, rgba(255, 179, 71, 0.08) 0%, rgba(0, 0, 0, 0.95) 75%);
+  transition: filter 0.3s ease;
 }
 
 #stage-wrap {
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), inset 0 0 40px rgba(255, 179, 71, 0.05);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), inset 0 0 40px rgba(255, 179, 71, 0.08);
+  border: 1px solid rgba(227, 160, 24, 0.35);
+  background: #0B0A12;
+}
+
+#stage-wrap:hover {
+  border-color: rgba(227, 160, 24, 0.6);
+  box-shadow: 0 0 70px rgba(227, 160, 24, 0.15), inset 0 0 50px rgba(255, 179, 71, 0.12);
 }
 
 .letterbox {
@@ -38,11 +46,18 @@ body.cinema #stage-wrap {
 }
 
 .pose-btn {
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.02);
+}
+.pose-btn:hover {
+  background: rgba(227, 160, 24, 0.1);
+  border-color: rgba(227, 160, 24, 0.4) !important;
+  transform: translateY(-1px);
 }
 .pose-btn.active {
-  box-shadow: 0 0 20px var(--amber);
+  box-shadow: 0 0 25px rgba(227, 160, 24, 0.5), inset 0 0 15px rgba(227, 160, 24, 0.15);
   border-color: var(--amber) !important;
+  background: rgba(227, 160, 24, 0.12) !important;
 }
 
 .mode-btn {
