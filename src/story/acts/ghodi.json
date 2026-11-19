@@ -1,0 +1,66 @@
+{
+  "id": "ghodi",
+  "title": "Ghodi aur Savar",
+  "subtitle": "The Prancing Mare of Marwar",
+  "puppetType": "horse",
+  "durationSeconds": 210,
+  "beats": [
+    {
+      "beat": 1,
+      "time": "0:00 — 0:35",
+      "name": "Prancing on the Sand Dunes",
+      "instructionIcon": "🐎",
+      "prompt": "Guide the horse along the backdrop; lift hand rhythmically to trot.",
+      "targetAction": "prance",
+      "targetPose": { "x": -0.35, "y": 1.55, "roll": 0.1 },
+      "soundCue": "greet"
+    },
+    {
+      "beat": 2,
+      "time": "0:35 — 1:10",
+      "name": "Rider's Double Salute",
+      "instructionIcon": "👋",
+      "prompt": "Pinch with your off-hand to raise the rider's arms in salutation.",
+      "targetAction": "wave",
+      "targetPose": { "x": 0, "y": 1.62, "roll": -0.15 },
+      "soundCue": "nod"
+    },
+    {
+      "beat": 3,
+      "time": "1:10 — 1:55",
+      "name": "The Monsoon Clouds Gather",
+      "instructionIcon": "🌧️",
+      "prompt": "Sway the horse gently as desert thunder rumbles softly in the distance.",
+      "targetAction": "sway",
+      "targetPose": { "x": 0.25, "y": 1.50, "roll": 0.25 },
+      "soundCue": "bow"
+    },
+    {
+      "beat": 4,
+      "time": "1:55 — 2:40",
+      "name": "Desert Sunrise Gallop",
+      "instructionIcon": "☀️",
+      "prompt": "Gallop forward into the golden morning light as the backdrop illuminates.",
+      "targetAction": "gallop",
+      "targetPose": { "x": 0, "y": 1.68, "roll": 0 },
+      "soundCue": "spin"
+    },
+    {
+      "beat": 5,
+      "time": "2:40 — 3:30",
+      "name": "Curtain of Golden Sands",
+      "instructionIcon": "✨",
+      "prompt": "Horse and rider bow together to generous courtyard applause.",
+      "targetAction": "curtainCall",
+      "targetPose": { "x": 0, "y": 1.45, "roll": 0 },
+      "soundCue": "cheer"
+    }
+  ],
+  "meetTheMaker": {
+    "title": "Meet the Maker: The Carved Marwari Horse",
+    "icon": "🐎",
+    "artisanCraft": "Wood-turned Arched Neck & Hand-stitched Caparison",
+    "description": "The Kathputli Ghodi is renowned for its stylized inward-curving ears—a hallmark of the indigenous Marwari horse breed. Its wooden core is draped in saffron and crimson scraps of fabric salvaged from festive turbans, stitched by hand with mirror-glass and bells.",
+    "communityDedication": "In honour of the Bhat puppeteers who brought legends to the deserts of Rajasthan."
+  }
+}

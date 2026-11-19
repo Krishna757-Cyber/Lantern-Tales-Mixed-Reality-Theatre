@@ -1,0 +1,66 @@
+{
+  "id": "mela",
+  "title": "Mela Night",
+  "subtitle": "The Desert Fair Finale",
+  "puppetType": "dancer",
+  "durationSeconds": 240,
+  "beats": [
+    {
+      "beat": 1,
+      "time": "0:00 — 0:40",
+      "name": "Festival Lanterns Kindle",
+      "instructionIcon": "🏮",
+      "prompt": "Color lights string across the sky as the courtyard bursts into carnival celebration.",
+      "targetAction": "kindle",
+      "targetPose": { "x": 0, "y": 1.62, "roll": 0 },
+      "soundCue": "greet"
+    },
+    {
+      "beat": 2,
+      "time": "0:40 — 1:25",
+      "name": "The Troupe Convenes",
+      "instructionIcon": "💃",
+      "prompt": "Anarkali, the Rider, and the Hero gather on stage; lift and turn in celebration.",
+      "targetAction": "dance",
+      "targetPose": { "x": -0.2, "y": 1.60, "roll": 0.2 },
+      "soundCue": "nod"
+    },
+    {
+      "beat": 3,
+      "time": "1:25 — 2:10",
+      "name": "Two-Player Duet Across Strings",
+      "instructionIcon": "🤝",
+      "prompt": "A companion joins on the second crossbar (live guest or ghost) to perform synchronized pirouettes.",
+      "targetAction": "duet",
+      "targetPose": { "x": 0.2, "y": 1.65, "roll": -0.25 },
+      "soundCue": "spin"
+    },
+    {
+      "beat": 4,
+      "time": "2:10 — 3:00",
+      "name": "Taal Crescendo",
+      "instructionIcon": "🥁",
+      "prompt": "Dance at full speed to fill the entire golden ring of marigolds on the Taal Meter.",
+      "targetAction": "crescendo",
+      "targetPose": { "x": 0, "y": 1.70, "roll": 0.45 },
+      "soundCue": "greet"
+    },
+    {
+      "beat": 5,
+      "time": "3:00 — 4:00",
+      "name": "Grand Marigold Curtain Call",
+      "instructionIcon": "🌸",
+      "prompt": "Hold open palms high as a shower of marigold petals covers the courtyard floor.",
+      "targetAction": "curtainCall",
+      "targetPose": { "x": 0, "y": 1.50, "roll": 0 },
+      "soundCue": "cheer"
+    }
+  ],
+  "meetTheMaker": {
+    "title": "Meet the Maker: The Troupe Shelf",
+    "icon": "🏮",
+    "artisanCraft": "Community Hereditary Lineage & Living Craft",
+    "description": "At the conclusion of every Mela performance, puppets are carefully unstrung and laid to rest in hand-woven cane baskets wrapped in neem leaves to preserve the wood and fabric from desert dry heat. Each doll carries generations of performance memories, passed down from parent to child through oral song and rhythmic muscle memory.",
+    "communityDedication": "In honour of the Bhat puppeteers of Rajasthan: keep the light burning, cast stories forever."
+  }
+}

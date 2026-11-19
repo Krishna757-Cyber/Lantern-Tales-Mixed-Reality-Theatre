@@ -1,0 +1,66 @@
+{
+  "id": "amarsingh",
+  "title": "Amar Singh Rathore",
+  "subtitle": "The Legend of Nagaur",
+  "puppetType": "hero",
+  "durationSeconds": 220,
+  "beats": [
+    {
+      "beat": 1,
+      "time": "0:00 — 0:35",
+      "name": "Entrance of the Noble Warrior",
+      "instructionIcon": "🛡️",
+      "prompt": "Raise the heroic Rathore chieftain with saffron safaa and shining shield.",
+      "targetAction": "lift",
+      "targetPose": { "x": 0, "y": 1.62, "roll": 0 },
+      "soundCue": "greet"
+    },
+    {
+      "beat": 2,
+      "time": "0:35 — 1:15",
+      "name": "The Unbroken Vow",
+      "instructionIcon": "🗡️",
+      "prompt": "Pinch the control crossbar firmly to assert steadfast loyalty and courage.",
+      "targetAction": "posture",
+      "targetPose": { "x": 0.1, "y": 1.65, "roll": -0.15 },
+      "soundCue": "nod"
+    },
+    {
+      "beat": 3,
+      "time": "1:15 — 1:55",
+      "name": "The March Across the Durbar",
+      "instructionIcon": "🏰",
+      "prompt": "Stride steadily across the courtyard floor; every step echoes with honor.",
+      "targetAction": "stride",
+      "targetPose": { "x": -0.2, "y": 1.58, "roll": 0.1 },
+      "soundCue": "spin"
+    },
+    {
+      "beat": 4,
+      "time": "1:55 — 2:40",
+      "name": "Defiance of Tyranny",
+      "instructionIcon": "⚔️",
+      "prompt": "Tilt high as symbolic banners wave; a bloodless, dignified victory of truth.",
+      "targetAction": "triumph",
+      "targetPose": { "x": 0, "y": 1.70, "roll": 0.25 },
+      "soundCue": "greet"
+    },
+    {
+      "beat": 5,
+      "time": "2:40 — 3:40",
+      "name": "The Warrior's Bow",
+      "instructionIcon": "✨",
+      "prompt": "A solemn bow of respect to the heritage of Rajasthan, met with thunderous applause.",
+      "targetAction": "curtainCall",
+      "targetPose": { "x": 0, "y": 1.45, "roll": 0 },
+      "soundCue": "cheer"
+    }
+  ],
+  "meetTheMaker": {
+    "title": "Meet the Maker: The Heroic Rathore Puppet",
+    "icon": "🛡️",
+    "artisanCraft": "Seasoned Hardwood Carving & Crimson Brocade",
+    "description": "Amar Singh Rathore is the undisputed hero of the traditional Bhat repertoire. His doll is carved larger than common courtiers, featuring a majestic curled moustache, a heavy saffron turban wound with golden zari cord, and a wooden shield covered in hammered copper foil.",
+    "communityDedication": "In tribute to the hereditary Bhat storytellers who keep historical memories alive through song and string."
+  }
+}

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lantern Tales — WebXR Shadow Theatre | Try Without a Headset</title>
+<meta name="description" content="Lantern Tales is a WebXR shadow theatre where your hands become puppets of light. Try on Quest, with webcam, or plain desktop. No data leaves your device.">
+<link rel="canonical" href="https://lanterntales.example/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lantern Tales — Hold light. Cast stories.">
+<meta property="og:description" content="A WebXR shadow theatre: lantern, parchment, and your hands. 90-second Director's Cut tour. Works on headset AND laptop.">
+<meta property="og:image" content="https://images.unsplash.com/photo-1519791883288-dc8bd696e667?w=1200&q=80&auto=format&fit=crop">
+<meta property="og:image:alt" content="Warm lantern glow casting a crow shadow puppet on parchment">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lantern Tales — WebXR Shadow Theatre">
+<meta name="twitter:description" content="Your hands become shadow puppets. Quest • Webcam • Desktop. Private by design.">
+<meta name="theme-color" content="#0B0A10">
+<link rel="icon" type="image/png" href="./public/lantern-tales-logo.png">
+<link rel="apple-touch-icon" href="./public/lantern-tales-logo.png">
+<meta property="og:image" content="./public/lantern-tales-logo.png">
+<meta name="twitter:image" content="./public/lantern-tales-logo.png">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link id="google-fonts-link" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=Josefin+Sans:wght@300;400;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<!-- Tailwind & External Libraries -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: 'var(--ink)',
+        amber: 'var(--amber)',
+        parchment: 'var(--parchment)',
+        indigo: 'var(--indigo)',
+        vermilion: 'var(--vermilion)'
+      },
+      fontFamily: {
+        display: ['var(--font-display)', 'Georgia', 'serif'],
+        sans: ['var(--font-body)', 'system-ui', 'sans-serif']
+      }
+    }
+  }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<!-- Modular Stylesheets -->
+<link rel="stylesheet" href="./src/styles/theme.css">
+<link rel="stylesheet" href="./src/styles/rangmanch.css">
+<link rel="stylesheet" href="./src/styles/stage.css">
+</head>
+
+<body class="paper-grain antialiased">
+<a href="#main" class="skip-link">Skip to content</a>
+<div id="scroll-progress" class="fixed top-0 left-0 h-[3px] bg-amber z-[120] debug-only" style="width:0%"></div>
+<div class="letterbox top-0"></div><div class="letterbox bottom-0"></div>
+
+<!-- ============ NAVIGATION ============ -->
+<header id="site-nav" class="fixed top-0 left-0 right-0 z-[100]">
+<nav class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2" aria-label="Main navigation">
+<div class="flex items-center gap-3">
+<a href="#/home" data-view="home" class="nav-link flex items-center gap-3 group" aria-label="Lantern Tales home">
+<div class="relative w-10 h-10 rounded-xl overflow-hidden shadow-lantern lantern-flicker border border-amber/60 group-hover:border-amber transition-all flex-shrink-0 bg-ink">
+<img src="./public/lantern-tales-logo.png" alt="Lantern Tales Logo" class="w-full h-full object-cover">
+</div>
+<div class="flex flex-col">
+<span class="font-display font-black text-lg tracking-tight leading-none">Lantern <span class="text-amber">Tales</span></span>
+<span class="text-[9px] uppercase tracking-[.22em] text-amber/80 font-mono mt-0.5">Step into Stories</span>
+</div>
+<span class="hidden xl:inline text-[10px] uppercase tracking-[.2em] bg-parchment/10 px-2 py-0.5 rounded-full border border-parchment/15 ml-1">Act 1 • Full-Stack</span>
+</a>
+</div>
+
+<div class="hidden lg:flex items-center gap-1 text-sm" role="tablist" aria-label="Site sections">
+<button data-view="home" class="nav-link px-4 py-2 rounded-lg hover:bg-parchment/10 font-medium text-amber font-semibold" role="tab">🦄 Home (Unicorn)</button>
+<button data-view="play" class="nav-link px-4 py-2 rounded-lg hover:bg-parchment/10 font-medium" role="tab">▶ Play</button>
+<button data-view="theatre" class="nav-link px-4 py-2 rounded-lg hover:bg-parchment/10 font-medium font-bold" role="tab">🏛️ Rang Manch</button>
+<button data-view="poses" class="nav-link px-4 py-2 rounded-lg hover:bg-parchment/10 font-medium" role="tab">Poses</button>
+<button data-view="stories" class="nav-link px-4 py-2 rounded-lg hover:bg-parchment/10 font-medium" role="tab">Stories</button>
+<button data-view="judges" class="nav-link px-4 py-2 rounded-lg hover:bg-parchment/10 font-medium" role="tab">Judges</button>
+</div>
+
+<div class="flex items-center gap-2">
+<span id="fps-pill" class="debug-only hidden sm:flex items-center gap-1.5 text-[11px] font-mono bg-parchment/10 border border-parchment/15 rounded-full px-3 py-1.5" title="Frame rate — target 72 on Quest 3, floor 60"><span id="fps-dot" class="w-2 h-2 rounded-full bg-green-400"></span><span id="fps-text">— fps</span></span>
+
+<!-- Theme Toggle & Studio Buttons -->
+<button id="btn-theme-toggle" class="btn-ghost text-xs sm:text-sm px-2.5 py-2 rounded-lg flex items-center gap-1.5 border border-parchment/15 hover:border-amber/50 transition-colors" title="Cycle theme preset (Dark • Light • Vermilion • Jade • Moon)" aria-label="Cycle theme preset">
+<span id="theme-icon" aria-hidden="true">🌑</span>
+<span id="theme-name" class="hidden sm:inline text-xs font-mono font-medium">Dark</span>
+</button>
+<button id="btn-theme-customize" class="btn-ghost text-xs sm:text-sm px-2.5 py-2 rounded-lg border border-parchment/15 hover:border-amber/50 transition-colors" title="Open Theme Studio (Customize colors & fonts)" aria-label="Open Theme Studio">🎨</button>
+
+<button id="btn-tour-nav" class="btn-primary text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg">✦ 90s Tour</button>
+<button id="btn-flags" class="btn-ghost text-xs sm:text-sm px-3 py-2 rounded-lg font-mono" aria-label="Open feature flags">flags.ts</button>
+<button id="btn-mobile-menu" class="lg:hidden btn-ghost px-3 py-2 rounded-lg" aria-label="Menu" aria-expanded="false">☰</button>
+</div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="lg:hidden hidden border-t border-parchment/10 bg-ink/95 px-4 py-3 flex flex-col gap-1">
+<button data-view="home" class="nav-link text-left px-3 py-2.5 rounded-lg hover:bg-parchment/10 text-amber font-semibold">🦄 Home (Unicorn Hero)</button>
+<button data-view="play" class="nav-link text-left px-3 py-2.5 rounded-lg hover:bg-parchment/10 font-medium">▶ Play — Shadow Stage</button>
+<button data-view="theatre" class="nav-link text-left px-3 py-2.5 rounded-lg hover:bg-parchment/10 font-medium">🏛️ Rang Manch — Kathputli</button>
+<button data-view="poses" class="nav-link text-left px-3 py-2.5 rounded-lg hover:bg-parchment/10">Poses Guide</button>
+<button data-view="stories" class="nav-link text-left px-3 py-2.5 rounded-lg hover:bg-parchment/10">Stories & Credits</button>
+<button data-view="judges" class="nav-link text-left px-3 py-2.5 rounded-lg hover:bg-parchment/10">Judges README</button>
+<div class="pt-2 border-t border-parchment/10 flex items-center justify-between gap-2">
+<button id="btn-theme-mobile" class="flex-1 py-2 rounded-lg bg-parchment/10 text-xs font-mono font-medium text-center hover:bg-amber hover:text-ink">🌑 Switch Theme</button>
+<button id="btn-theme-custom-mobile" class="px-3 py-2 rounded-lg bg-parchment/10 text-xs font-mono font-medium hover:bg-amber hover:text-ink">🎨 Studio</button>
+</div>
+</div>
+</header>
+
+<main id="main" class="pt-16">
+<!-- ==================================================== HOME ==================================================== -->
+<section id="view-home" class="view active" aria-label="Landing page">
+<!-- HERO with Three.js 3D lantern -->
+<div class="relative min-h-[96vh] flex items-center overflow-hidden" id="hero" style="background: var(--bg-page);">
+<canvas id="hero-canvas" class="absolute inset-0 w-full h-full" aria-hidden="true"></canvas>
+<div class="absolute inset-0 pointer-events-none hero-vignette"></div>
+<div class="relative z-10 max-w-5xl mx-auto px-5 sm:px-8 text-center pt-10 pb-20 w-full">
+<!-- Official Illuminated Logo Emblem -->
+<div class="mb-5 flex flex-col items-center justify-center">
+  <div class="relative group inline-block">
+    <div class="absolute -inset-3 bg-gradient-to-r from-amber/30 via-[#E3A018]/50 to-amber/30 rounded-full blur-xl opacity-75 group-hover:opacity-100 transition duration-700 animate-pulse pointer-events-none"></div>
+    <div class="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full p-1 bg-gradient-to-b from-amber via-amber/40 to-ink border-2 border-amber/70 shadow-2xl overflow-hidden group-hover:scale-105 transition-transform duration-300">
+      <img src="./public/lantern-tales-logo.png" alt="Lantern Tales — Step into Stories" class="w-full h-full object-cover rounded-full">
+    </div>
+  </div>
+</div>
+
+<p class="inline-flex items-center gap-2 text-[11px] sm:text-xs uppercase tracking-[.25em] bg-ink/60 backdrop-blur border border-amber/30 text-amber rounded-full px-4 py-2">🏮 WebXR Shadow Theatre • Seated • Hands-only</p>
+<h1 class="font-display font-black text-5xl sm:text-7xl lg:text-8xl leading-[.95] mt-6">Hold light.<br><span class="text-amber" style="text-shadow:0 0 60px rgba(255,179,71,.5)">Cast stories.</span></h1>
+<p class="mt-6 text-lg sm:text-xl text-parchment/90 max-w-2xl mx-auto leading-relaxed"><strong class="text-parchment">Lantern Tales is a shadow theatre where your hands become puppets of light</strong> — no controllers, just lantern, parchment, and play. On Quest, with a webcam, or plain desktop.</p>
+<div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+<button id="xr-btn" class="btn-primary px-7 py-4 rounded-xl text-base w-full sm:w-auto">🥽 Enter on Quest</button>
+<button id="webcam-btn" class="btn-ghost px-7 py-4 rounded-xl text-base w-full sm:w-auto bg-ink/50 backdrop-blur">📷 Try with webcam</button>
+<button id="video-btn" class="btn-ghost px-7 py-4 rounded-xl text-base w-full sm:w-auto bg-ink/50 backdrop-blur">▶ Watch 3-min video</button>
+</div>
+<p id="xr-status" class="mt-3 text-xs text-parchment/60" role="status">Checking headset support…</p>
+<div class="mt-8 flex flex-wrap justify-center gap-2 text-[11px] font-mono">
+<span class="bg-ink/60 border border-parchment/15 rounded-full px-3 py-1.5">⚡ 72 fps target • 60 floor</span>
+<span class="bg-ink/60 border border-parchment/15 rounded-full px-3 py-1.5">🔒 Video never leaves device</span>
+<span class="bg-ink/60 border border-parchment/15 rounded-full px-3 py-1.5">🍪 No cookies • No login</span>
+<span class="bg-ink/60 border border-parchment/15 rounded-full px-3 py-1.5">♿ Seated • Reduced-motion ok</span>
+</div>
+<p class="mt-10 text-sm text-amber/90 font-medium">🦄 Move your cursor — the mythical Unicorn shadow follows &nbsp;•&nbsp; Click to kindle</p>
+</div>
+</div>
+
+<!-- Marquee -->
+<div class="border-y py-3 overflow-hidden" style="background: var(--surface); border-color: var(--border);" aria-hidden="true">
+<div class="flex whitespace-nowrap gap-8 font-display font-bold text-amber/70 text-lg w-max">
+<span>KINDLE 🕯️ &nbsp;•&nbsp; BEAK ◑ &nbsp;•&nbsp; PEBBLE ⬤ &nbsp;•&nbsp; GUIDE ➤ &nbsp;•&nbsp; WINGS 🪽 &nbsp;•&nbsp; SUNRISE ☀ &nbsp;•&nbsp; DUET 🤝 &nbsp;•&nbsp; BLOOM 🏮 &nbsp;•&nbsp;</span>
+<span>KINDLE 🕯️ &nbsp;•&nbsp; BEAK ◑ &nbsp;•&nbsp; PEBBLE ⬤ &nbsp;•&nbsp; GUIDE ➤ &nbsp;•&nbsp; WINGS 🪽 &nbsp;•&nbsp; SUNRISE ☀ &nbsp;•&nbsp; DUET 🤝 &nbsp;•&nbsp; BLOOM 🏮 &nbsp;•&nbsp;</span>
+</div>
+</div>
+
+<!-- ============ RANG-MANCH THEATRICAL STORYTELLING ============ -->
+<section class="relative overflow-hidden py-24 border-b border-parchment/10" style="background: linear-gradient(180deg, var(--bg-page) 0%, var(--surface) 50%, var(--bg-page) 100%);">
+<div class="spotlight-beam" style="left:12%;top:-20px;animation-delay:0s"></div>
+<div class="spotlight-beam" style="right:15%;top:-20px;animation-delay:3s"></div>
+
+<div class="max-w-6xl mx-auto px-5 sm:px-8 relative z-10">
+<div class="text-center max-w-3xl mx-auto mb-20">
+<p class="text-xs uppercase tracking-[.3em] font-bold text-amber mb-3 flex items-center justify-center gap-2">
+<span class="w-8 h-[1px] bg-amber/50"></span>
+<span>रंगमंच • THE LIVING SHADOW STAGE</span>
+<span class="w-8 h-[1px] bg-amber/50"></span>
+</p>
+<blockquote class="font-display font-medium text-2xl sm:text-3xl lg:text-4xl leading-snug italic text-parchment">
+“The stage is not a fixed architecture; it is an ancient agreement struck between flickering flame, physical wall, and the shape of your hand.”
+</blockquote>
+<p class="mt-4 text-xs font-mono tracking-widest text-parchment/50 uppercase">— Tradition of Chhaya-Natak (छाया नाटक) & Kelir Theatre</p>
+</div>
+
+<!-- 5-Beat Performance Timeline -->
+<div class="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 items-start">
+<div>
+<div class="mb-8">
+<span class="text-xs font-mono font-bold tracking-widest text-vermilion uppercase">Act I Performance Arc</span>
+<h2 class="font-display font-black text-3xl sm:text-4xl text-parchment mt-1">Five Beats of Light & Clay</h2>
+<p class="text-sm text-parchment/70 mt-2 leading-relaxed">Each hand shape is a line of dialogue. Step into the shoes of the Dalang (puppeteer) and perform the fable without uttering a single word.</p>
+</div>
+
+<div class="act-timeline">
+<div class="act-timeline-node group">
+<div class="flex items-center gap-2 mb-1"><span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-amber/20 text-amber">Beat 1 • Kindle</span><span class="text-xs text-parchment/40 font-mono">0:00 — 0:12</span></div>
+<h3 class="font-display font-bold text-xl text-parchment group-hover:text-amber transition">Awakening the Brass Lantern</h3>
+<p class="text-sm text-parchment/70 mt-1 leading-relaxed">Present an open palm. The wick catches fire, casting warm amber ripples over the textured parchment wall.</p>
+<div class="mt-3 flex items-center gap-3"><button class="try-pose text-xs font-bold font-mono px-3 py-1.5 rounded-lg bg-amber text-ink hover:opacity-90 transition" data-pose="1">Perform Beat 1 ▶</button></div>
+</div>
+
+<div class="act-timeline-node group">
+<div class="flex items-center gap-2 mb-1"><span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-amber/20 text-amber">Beat 2 • The Beak</span><span class="text-xs text-parchment/40 font-mono">0:12 — 0:28</span></div>
+<h3 class="font-display font-bold text-xl text-parchment group-hover:text-amber transition">The Origami Crow Awakens</h3>
+<p class="text-sm text-parchment/70 mt-1 leading-relaxed">Bring thumb and index together. A pointed beak forms on the wall. Hold for two heartbeats as paper perforations shiver.</p>
+<div class="mt-3 flex items-center gap-3"><button class="try-pose text-xs font-bold font-mono px-3 py-1.5 rounded-lg bg-amber text-ink hover:opacity-90 transition" data-pose="2">Perform Beat 2 ▶</button></div>
+</div>
+
+<div class="act-timeline-node group">
+<div class="flex items-center gap-2 mb-1"><span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-vermilion/30 text-vermilion">Beat 3 • Hero Moment</span><span class="text-xs text-parchment/40 font-mono">0:28 — 0:42</span></div>
+<h3 class="font-display font-bold text-xl text-parchment group-hover:text-amber transition">Flight Around the Room Corner</h3>
+<p class="text-sm text-parchment/70 mt-1 leading-relaxed">Spread your fingers like plumage. The bird detaches, bends physically around your room corner, and soars away.</p>
+<div class="mt-3 flex items-center gap-3"><button class="try-pose text-xs font-bold font-mono px-3 py-1.5 rounded-lg bg-vermilion text-white hover:opacity-90 transition" data-pose="5">Perform Flight ▶</button></div>
+</div>
+
+<div class="act-timeline-node group">
+<div class="flex items-center gap-2 mb-1"><span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-amber/20 text-amber">Beat 4 • The Rising Sea</span><span class="text-xs text-parchment/40 font-mono">0:42 — 1:05</span></div>
+<h3 class="font-display font-bold text-xl text-parchment group-hover:text-amber transition">Pebbles in the Dry Vessel</h3>
+<p class="text-sm text-parchment/70 mt-1 leading-relaxed">Clench your fist to manifest glowing stones. Each drop raises the water level drop by drop.</p>
+<div class="mt-3 flex items-center gap-3"><button class="try-pose text-xs font-bold font-mono px-3 py-1.5 rounded-lg bg-amber text-ink hover:opacity-90 transition" data-pose="3">Perform Beat 4 ▶</button></div>
+</div>
+
+<div class="act-timeline-node group">
+<div class="flex items-center gap-2 mb-1"><span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-amber/20 text-amber">Beat 5 • The Duet</span><span class="text-xs text-parchment/40 font-mono">1:05 — 1:30</span></div>
+<h3 class="font-display font-bold text-xl text-parchment group-hover:text-amber transition">Two Hands Across the Wall</h3>
+<p class="text-sm text-parchment/70 mt-1 leading-relaxed">A companion shadow hand enters from the opposite wall — whether live guest or ghost. Palms meet in passthrough.</p>
+<div class="mt-3 flex items-center gap-3"><button class="try-pose text-xs font-bold font-mono px-3 py-1.5 rounded-lg bg-amber text-ink hover:opacity-90 transition" data-pose="7">Perform Finale ▶</button></div>
+</div>
+</div>
+</div>
+
+<!-- Lore Cards -->
+<div class="space-y-6">
+<div class="ink-card rounded-2xl p-7 relative overflow-hidden border border-amber/20">
+<span class="text-xs font-mono font-bold tracking-widest text-amber uppercase">Cultural Heritage</span>
+<h3 class="font-display font-bold text-2xl text-parchment mt-1 mb-3">Living Traditions of Shadow</h3>
+<div class="space-y-4">
+<div class="lore-card">
+<h4 class="font-display font-bold text-base text-parchment">Wayang Kulit (Java & Bali)</h4>
+<p class="text-xs text-parchment/70 leading-relaxed mt-0.5">The Dalang sits behind the cotton Kelir screen with an overhead oil flame, animating perforated buffalo hide.</p>
+</div>
+<div class="lore-card">
+<h4 class="font-display font-bold text-base text-parchment">Chhaya Natak (Ancient India)</h4>
+<p class="text-xs text-parchment/70 leading-relaxed mt-0.5">Sanskrit illuminated theatre originating in the Natya Shastra, exploring philosophical epics through silhouettes.</p>
+</div>
+<div class="lore-card">
+<h4 class="font-display font-bold text-base text-parchment">Aesop's Fable (Perry 198)</h4>
+<p class="text-xs text-parchment/70 leading-relaxed mt-0.5">The Crow and the Pitcher: perseverance and tool use passed down through oral tradition across cultures.</p>
+</div>
+</div>
+</div>
+
+<div class="parchment-card rounded-2xl p-6 text-ink">
+<h4 class="font-display font-bold text-lg leading-tight">The Rang-Manch Promise</h4>
+<p class="text-xs leading-relaxed opacity-90 mt-1">During performance, the UI dissolves completely into cinema letterboxing. Only the warm lantern glow and paper shadow remain.</p>
+<button data-view="play" class="nav-link mt-4 w-full py-2.5 rounded-xl bg-ink text-parchment font-bold text-xs hover:bg-[#1a1730] transition text-center block">Step onto the Stage Now →</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- What it is -->
+<div id="how" class="max-w-7xl mx-auto px-5 sm:px-8 py-20">
+<div class="grid md:grid-cols-3 gap-5">
+<article class="ink-card rounded-2xl p-7"><div class="text-3xl mb-3">🕯️</div><h2 class="font-display font-bold text-2xl mb-2">Light</h2><p class="text-parchment/70 leading-relaxed text-[15px]">A lantern follows your gaze so shadows swing gently. On Quest it bends across real room corners; on laptop it lives on parchment.</p></article>
+<article class="ink-card rounded-2xl p-7"><div class="text-3xl mb-3">🤲</div><h2 class="font-display font-bold text-2xl mb-2">Shadow</h2><p class="text-parchment/70 leading-relaxed text-[15px]">Eight hand poses become puppets — beak, crow, pebbles, sunrise. Same 25-joint schema in XR, webcam, and mouse modes.</p></article>
+<article class="ink-card rounded-2xl p-7"><div class="text-3xl mb-3">📜</div><h2 class="font-display font-bold text-2xl mb-2">Story</h2><p class="text-parchment/70 leading-relaxed text-[15px]">Three credited tales in Act 1: the crow, the water, the duet. A 90-second Director's Cut tour plays them all.</p></article>
+</div>
+</div>
+</section>
+
+<!-- ==================================================== PLAY ==================================================== -->
+<section id="view-play" class="view" aria-label="Shadow theatre stage">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+<div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+<div class="flex items-center gap-3">
+<button id="btn-calibrate" class="btn-ghost text-xs px-3 py-2 rounded-lg" title="Recenter seated stage">◎ Recenter</button>
+<button id="toggle-corner" class="btn-ghost text-xs px-3 py-2 rounded-lg" role="switch" aria-checked="true">Room Corner: ON</button>
+<button id="btn-drop-pebble" class="btn-ghost text-xs px-3 py-2 rounded-lg text-amber font-mono">✊ Drop Pebble</button>
+<button id="btn-fly-crow" class="btn-ghost text-xs px-3 py-2 rounded-lg text-amber font-mono">🪽 Fly Crow</button>
+</div>
+<div class="flex items-center gap-2">
+<span id="pose-badge" class="bg-parchment/10 border border-parchment/20 rounded-full px-4 py-2 text-xs font-mono">Pose 1 • Kindle</span>
+</div>
+</div>
+
+<div class="grid xl:grid-cols-[1fr_340px] gap-4">
+<!-- STAGE CANVAS -->
+<div id="stage-wrap" class="relative rounded-2xl overflow-hidden border border-amber/20 bg-black" style="min-height:62vh">
+<canvas id="stage" class="w-full block" style="height:62vh" aria-label="Shadow theatre stage" tabindex="0"></canvas>
+
+<!-- Webcam Permission Modal -->
+<div id="perm-screen" class="absolute inset-0 z-20 hidden items-center justify-center bg-ink/90 backdrop-blur p-6 text-center">
+<div class="parchment-card max-w-md rounded-2xl p-8">
+<div class="text-4xl mb-3">📷</div>
+<h2 class="font-display font-black text-2xl mb-2">Use your camera?</h2>
+<p class="text-sm leading-relaxed mb-1"><strong>In plain words:</strong> your video <strong>never leaves this device</strong>. Nothing is recorded, saved, or uploaded. Tracking runs on-device.</p>
+<div class="flex flex-col gap-2 mt-4">
+<button id="btn-allow-cam" class="px-5 py-3 rounded-xl bg-ink text-parchment font-bold text-sm">Allow camera — stay private</button>
+<button id="btn-no-cam" class="px-5 py-3 rounded-xl border-2 border-ink/20 font-bold text-sm">Continue without camera</button>
+</div>
+</div>
+</div>
+
+<!-- Tour Caption Overlay -->
+<div id="tour-caption" class="absolute left-1/2 -translate-x-1/2 bottom-5 z-10 hidden w-[92%] max-w-xl" role="status">
+<div class="parchment-card rounded-lg px-5 py-4 flex items-center gap-3">
+<span id="tour-icon" class="text-2xl">🕯️</span>
+<div class="flex-1 min-w-0"><p id="tour-text" class="font-semibold text-[15px] leading-snug">Welcome.</p></div>
+</div>
+</div>
+</div>
+
+<!-- SIDEBAR CONTROLS -->
+<div id="sidebar-play" class="space-y-4">
+<div class="ink-card rounded-2xl p-5">
+<h3 class="font-display font-bold text-lg text-amber mb-3">Hand Poses (1–8)</h3>
+<div class="grid grid-cols-2 gap-2 text-xs">
+<button class="pose-btn p-3 rounded-xl border border-parchment/15 text-left active" data-pose="1"><p class="font-bold">1 • Kindle</p><p class="text-[10px] opacity-60">Open palm</p></button>
+<button class="pose-btn p-3 rounded-xl border border-parchment/15 text-left" data-pose="2"><p class="font-bold">2 • Beak</p><p class="text-[10px] opacity-60">Thumb-index pinch</p></button>
+<button class="pose-btn p-3 rounded-xl border border-parchment/15 text-left" data-pose="3"><p class="font-bold">3 • Pebble</p><p class="text-[10px] opacity-60">Clenched fist</p></button>
+<button class="pose-btn p-3 rounded-xl border border-parchment/15 text-left" data-pose="4"><p class="font-bold">4 • Guide</p><p class="text-[10px] opacity-60">Index point</p></button>
+<button class="pose-btn p-3 rounded-xl border border-parchment/15 text-left" data-pose="5"><p class="font-bold">5 • Wings</p><p class="text-[10px] opacity-60">Flap flight</p></button>
+<button class="pose-btn p-3 rounded-xl border border-parchment/15 text-left" data-pose="6"><p class="font-bold">6 • Sunrise</p><p class="text-[10px] opacity-60">L-frame</p></button>
+<button class="pose-btn p-3 rounded-xl border border-parchment/15 text-left" data-pose="7"><p class="font-bold">7 • Meet</p><p class="text-[10px] opacity-60">Shadow duet</p></button>
+<button class="pose-btn p-3 rounded-xl border border-parchment/15 text-left" data-pose="8"><p class="font-bold">8 • Bloom</p><p class="text-[10px] opacity-60">Open finale</p></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================================================== RANG MANCH VIRTUAL THEATRE ==================================================== -->
+<section id="view-theatre" class="view" aria-label="Rang Manch Virtual Theatre">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+
+<!-- Haveli Parallax Header & Dedication -->
+<div class="relative overflow-hidden rounded-3xl p-8 sm:p-12 mb-8 border border-amber/30" style="background: linear-gradient(135deg, rgba(30,10,10,0.95) 0%, rgba(42,14,14,0.92) 50%, rgba(15,10,30,0.95) 100%);">
+  <!-- Handcrafted SVG Scalloped Arches & Jaali Lattice (No AI imagery) -->
+  <svg class="absolute top-0 right-0 w-80 h-full opacity-15 pointer-events-none" viewBox="0 0 300 400" fill="none" aria-hidden="true">
+    <path d="M150 20 C220 20 280 80 280 160 C280 230 240 280 240 380 L60 380 C60 280 20 230 20 160 C20 80 80 20 150 20 Z" stroke="#E3A018" stroke-width="4"/>
+    <path d="M150 50 C200 50 250 100 250 160 C250 220 220 260 220 380 L80 380 C80 260 50 220 50 160 C50 100 100 50 150 50 Z" stroke="#C2185B" stroke-width="2"/>
+    <circle cx="150" cy="110" r="16" fill="#E3A018" fill-opacity="0.3"/>
+  </svg>
+
+  <div class="relative z-10 max-w-3xl">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber/20 border border-amber/40 text-amber text-xs font-mono font-bold mb-4">
+      <span>🏮 RANG MANCH • THE VIRTUAL THEATRE • RAJASTHANI KATHPUTLI</span>
+    </div>
+    <h1 class="font-display font-black text-4xl sm:text-6xl text-parchment leading-tight">
+      Step into the Haveli.<br><span class="text-amber">Hold strings of living lore.</span>
+    </h1>
+    <blockquote class="mt-4 text-sm sm:text-base text-parchment/85 italic border-l-2 border-amber pl-4">
+      “In honour of the kathputli puppeteers of Rajasthan, whose fingers hold centuries of living rhythm and light.”
+    </blockquote>
+    <div class="mt-6 flex flex-wrap gap-3">
+      <a href="index.html?theatre=1" class="btn-primary px-6 py-3 rounded-xl text-sm font-bold shadow-lg">
+        🥽 Launch Virtual Theatre on Quest (?theatre=1)
+      </a>
+      <a href="site/theatre.html" target="_blank" rel="noopener" class="btn-ghost px-5 py-3 rounded-xl text-sm font-mono border border-parchment/20 flex items-center gap-2">
+        🌐 Open Standalone /theatre Page ↗
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Main 3D Kathputli Stage Container -->
+<div class="grid lg:grid-cols-[1fr_360px] gap-6 items-start">
+  <div>
+    <div id="theatre-stage-wrap" class="relative rounded-3xl overflow-hidden border border-amber/30 shadow-2xl bg-[#0E0C16]" style="min-height: 58vh;">
+      <canvas id="theatre-stage-canvas" class="w-full h-full block" style="min-height: 58vh;" aria-label="Interactive Kathputli Stage"></canvas>
+
+      <!-- Stage HUD Overlay -->
+      <div class="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
+        <div class="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl border border-parchment/15 pointer-events-auto">
+          <span class="text-xs font-mono text-amber font-bold">MODE:</span>
+          <select id="select-theatre-immersion" class="bg-transparent text-xs font-mono text-parchment focus:outline-none cursor-pointer">
+            <option value="hall" class="bg-ink text-parchment">🏛️ Haveli Courtyard (Full VR)</option>
+            <option value="table" class="bg-ink text-parchment">🛋️ Tabletop Proscenium (MR)</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2 pointer-events-auto">
+          <button id="btn-toggle-theatre-audio" class="btn-ghost text-xs px-3 py-1.5 rounded-xl border border-parchment/20">
+            <span id="theatre-audio-icon">🔊</span> Dholak
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Interactive Toolbar -->
+      <div class="absolute bottom-4 left-4 right-4 flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
+        <!-- 5 Folk Acts -->
+        <div class="flex items-center gap-1.5 bg-black/70 backdrop-blur-md p-1.5 rounded-2xl border border-parchment/15 overflow-x-auto max-w-full">
+          <button class="theatre-act-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-amber text-ink font-bold shrink-0" data-act="anarkali">💃 Anarkali</button>
+          <button class="theatre-act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-parchment hover:bg-parchment/10 shrink-0" data-act="ghodi">🐎 Ghodi</button>
+          <button class="theatre-act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-parchment hover:bg-parchment/10 shrink-0" data-act="sapera">🐍 Sapera</button>
+          <button class="theatre-act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-parchment hover:bg-parchment/10 shrink-0" data-act="amarsingh">🛡️ Amar Singh</button>
+          <button class="theatre-act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-parchment hover:bg-parchment/10 shrink-0" data-act="mela">🏮 Mela</button>
+        </div>
+
+        <!-- Quick Performance Triggers -->
+        <div class="flex items-center gap-2">
+          <button id="btn-stage-spin" class="px-3 sm:px-4 py-2 rounded-xl text-xs font-bold font-mono bg-amber text-ink hover:brightness-110 shadow-lg">
+            🌸 Spin Chakkar
+          </button>
+          <button id="btn-stage-curtain" class="px-3 sm:px-4 py-2 rounded-xl text-xs font-bold font-mono bg-vermilion text-white hover:brightness-110 shadow-lg">
+            🎪 Curtain Call
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Act Details Banner -->
+    <div id="act-detail-card" class="mt-4 p-5 rounded-2xl ink-card border border-amber/20">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <span id="act-badge" class="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded bg-amber/20 text-amber">Active Act • Anarkali Nritya</span>
+          <h3 id="act-title" class="font-display font-bold text-xl text-parchment mt-1">The Court Dancer's Pirouette</h3>
+          <p id="act-desc" class="text-xs text-parchment/70 mt-1 leading-relaxed">
+            Curtain parts, Anarkali salutes the court, dances to the dholak beat with swirling rani-pink skirt and ghungroo foley bells.
+          </p>
+        </div>
+        <div class="text-right shrink-0">
+          <span class="text-xs font-mono text-parchment/50">Taal Meter</span>
+          <div id="theatre-taal-meter" class="flex items-center gap-0.5 mt-1 text-sm">
+            <span>🌼</span><span>🌼</span><span>🌼</span><span>🌼</span><span class="opacity-30">🌼</span><span class="opacity-30">🌼</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar: Backstage Workshop & Lore -->
+  <div class="space-y-4">
+    <!-- Backstage Workshop -->
+    <div class="ink-card rounded-2xl p-6 border border-amber/20">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs font-mono font-bold tracking-widest text-amber uppercase">Backstage Workshop</span>
+        <span class="text-xs">🪵 Custom Rig</span>
+      </div>
+      <h3 class="font-display font-bold text-lg text-parchment mb-2">Assemble Your Kathputli</h3>
+      <p class="text-xs text-parchment/70 leading-relaxed mb-4">
+        Customize original components hand-shaped in the style of Rajasthani woodcarvers.
+      </p>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-mono text-parchment/80 mb-1">Wood Head Material:</label>
+          <select id="workshop-head" class="w-full bg-black/50 border border-parchment/20 rounded-xl px-3 py-2 text-parchment font-mono focus:border-amber focus:outline-none">
+            <option value="rohida_classic">Rohida Wood (Desert Teak • Warm Ochre)</option>
+            <option value="mango_aged">Mango Wood (Aged Patina • Rich Brown)</option>
+            <option value="ivory_teak">Shekhawati Teak (Lacquered Light)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-mono text-parchment/80 mb-1">Turban / Odhni Veil:</label>
+          <select id="workshop-turban" class="w-full bg-black/50 border border-parchment/20 rounded-xl px-3 py-2 text-parchment font-mono focus:border-amber focus:outline-none">
+            <option value="safaa_turmeric">Turmeric Gold Safaa (Marwar)</option>
+            <option value="safaa_saffron">Jodhpur Saffron Safaa</option>
+            <option value="odhni_pink">Rani Pink Odhni (Gota Lace)</option>
+            <option value="odhni_indigo">Indigo Bandhani Chunari</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-mono text-parchment/80 mb-1">Pleated Ghaghra Skirt:</label>
+          <select id="workshop-skirt" class="w-full bg-black/50 border border-parchment/20 rounded-xl px-3 py-2 text-parchment font-mono focus:border-amber focus:outline-none">
+            <option value="ghaghra_rani">Rani Pink Tiered Skirt</option>
+            <option value="ghaghra_saffron">Turmeric Yellow Bandhani</option>
+            <option value="ghaghra_indigo">Indigo Shisha Mirror Skirt</option>
+            <option value="ghaghra_white">Courtier White Pleated Robe</option>
+          </select>
+        </div>
+
+        <button id="btn-save-troupe" class="w-full mt-2 py-2.5 rounded-xl bg-amber text-ink font-bold text-xs hover:brightness-105 shadow transition">
+          💾 Save to Troupe Shelf
+        </button>
+      </div>
+    </div>
+
+    <!-- Cultural Lineage Credit -->
+    <div class="parchment-card rounded-2xl p-6 text-ink">
+      <span class="text-[10px] uppercase font-mono font-bold tracking-widest opacity-75">Cultural Stewardship</span>
+      <h4 class="font-display font-bold text-base mt-1">Preserved by the Bhat Community</h4>
+      <p class="text-xs leading-relaxed opacity-90 mt-2">
+        Documented by Sangeet Natak Akademi and Rupayan Sansthan. Traditional Kathputli performances feature secular folk epics and court dances; deities are strictly not represented.
+      </p>
+      <div class="mt-3 pt-3 border-t border-ink/20 flex items-center justify-between text-[11px] font-mono">
+        <span>Procedural Boli Reed</span>
+        <span class="font-bold text-amber">✓ Non-violent</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</section>
+
+<!-- ==================================================== POSES ==================================================== -->
+<section id="view-poses" class="view" aria-label="Pose guide">
+<div class="max-w-7xl mx-auto px-5 sm:px-8 py-12">
+<h2 class="font-display font-black text-4xl mb-6">Eight Gestural Forms</h2>
+<p class="text-parchment/70 max-w-2xl mb-8">Each hand pose has been calibrated across adult and child hands with diverse skin tones, operating entirely in local normalized space.</p>
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4" id="pose-detail-grid">
+<!-- Populated by JS -->
+</div>
+</div>
+</section>
+
+<!-- ==================================================== STORIES ==================================================== -->
+<section id="view-stories" class="view" aria-label="Story lore and credits">
+<div class="max-w-5xl mx-auto px-5 sm:px-8 py-12">
+<h2 class="font-display font-black text-4xl mb-4">Origins & Cultural Stewardship</h2>
+<div class="mb-8 p-6 ink-card rounded-2xl flex flex-col sm:flex-row items-center gap-6 border border-amber/30">
+  <div class="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border-2 border-amber/70 shadow-xl shrink-0 bg-ink">
+    <img src="./public/lantern-tales-logo.png" alt="Lantern Tales Official Logo" class="w-full h-full object-cover">
+  </div>
+  <div>
+    <span class="text-[10px] font-mono uppercase tracking-widest text-amber font-bold">Official Visual Identity</span>
+    <h3 class="font-display font-bold text-2xl mt-1">Lantern Tales: Step Into Stories</h3>
+    <p class="text-sm text-parchment/80 leading-relaxed mt-2">Where hands become puppets of light, bridging ancient shadow theatre and Rajasthani Kathputli traditions with modern controller-free WebXR spatial computing.</p>
+  </div>
+</div>
+
+<div class="space-y-6">
+<article class="ink-card rounded-2xl p-7">
+<h3 class="font-display font-bold text-2xl text-amber mb-2">The Crow & The Pitcher (Perry 198)</h3>
+<p class="text-sm text-parchment/80 leading-relaxed">Recorded in Aesopica and celebrated in ancient Indian Panchatantra collections as a tale of intellect, perseverance, and tool use.</p>
+</article>
+<article class="ink-card rounded-2xl p-7">
+<h3 class="font-display font-bold text-2xl text-amber mb-2">Wayang Kulit Screen & Coconut Lamp</h3>
+<p class="text-sm text-parchment/80 leading-relaxed">Shadow theatre as community ceremony. We credit the Dalang master artists who preserve the harmony of puppet, lamp, and spectator.</p>
+</article>
+</div>
+</div>
+</section>
+
+<!-- ==================================================== JUDGES ==================================================== -->
+<section id="view-judges" class="view" aria-label="Judges README">
+<div class="max-w-5xl mx-auto px-5 sm:px-8 py-12">
+<div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+<div>
+<span class="text-xs font-mono font-bold uppercase tracking-widest text-amber">Competition Pre-flight</span>
+<h2 class="font-display font-black text-4xl mt-1">Judge Smoke Test Harness</h2>
+</div>
+<button id="btn-smoke" class="btn-primary px-6 py-3 rounded-xl text-sm font-bold">🔬 Run Smoke Test Now</button>
+</div>
+<div class="ink-card rounded-2xl p-6 font-mono text-xs">
+<pre id="smoke-log" class="overflow-y-auto max-h-96 whitespace-pre-wrap text-parchment/80">Press "Run Smoke Test Now" to verify lint, strict types, unit tests, fps budget, and full-stack signaling.</pre>
+</div>
+</div>
+</section>
+</main>
+
+<!-- FOOTER -->
+<footer class="border-t mt-16 py-12" style="background: var(--surface); border-color: var(--border);">
+<div class="max-w-7xl mx-auto px-5 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-sm">
+<div class="flex items-center gap-4">
+  <img src="./public/lantern-tales-logo.png" alt="Lantern Tales Logo" class="w-14 h-14 rounded-2xl border border-amber/50 shadow-md object-cover flex-shrink-0 bg-ink">
+  <div>
+    <p class="font-display font-black text-xl leading-tight">Lantern <span class="text-amber">Tales</span></p>
+    <p class="text-xs uppercase tracking-widest text-amber/80 font-mono mt-0.5">✦ Step into Stories ✦</p>
+    <p class="text-xs text-parchment/60 mt-1">Full-stack WebXR Shadow & Kathputli Theatre • Meta VR Start Competition 2026</p>
+  </div>
+</div>
+<p class="text-xs font-mono text-parchment/40 text-center md:text-right">Private by design • No cookies • No camera frames uploaded</p>
+</div>
+</footer>
+
+<!-- FLAGS DRAWER -->
+<div id="flags-drawer" class="fixed top-0 right-0 h-full w-full max-w-sm border-l z-[130] translate-x-full transition-transform duration-300 flex flex-col shadow-2xl" style="background: var(--surface-raised); border-color: var(--border);" role="dialog" aria-label="Feature flags" aria-hidden="true">
+<div class="p-6 border-b border-parchment/10 flex items-center justify-between">
+<div><h2 class="font-display font-bold text-xl">🚩 flags.ts</h2><p class="text-xs font-mono text-parchment/50">Runtime Feature Flags</p></div>
+<button id="btn-close-flags" class="btn-ghost px-3 py-2 rounded-lg" aria-label="Close flags">✕</button>
+</div>
+<div id="flags-list" class="p-6 space-y-3 overflow-y-auto flex-1"></div>
+<div class="p-6 border-t border-parchment/10"><pre id="flags-code-drawer" class="bg-black/60 rounded-xl p-3 text-[10.5px] font-mono overflow-x-auto"></pre></div>
+</div>
+
+<!-- THEME STUDIO DRAWER -->
+<div id="theme-drawer" class="fixed top-0 right-0 h-full w-full max-w-md border-l z-[130] translate-x-full transition-transform duration-300 flex flex-col shadow-2xl" style="background: var(--surface-raised); border-color: var(--border);" role="dialog" aria-label="Theme Studio" aria-hidden="true">
+<div class="p-6 border-b border-parchment/10 flex items-center justify-between">
+<div><h2 class="font-display font-bold text-xl flex items-center gap-2"><span>🎨</span> Theme Studio</h2><p class="text-xs font-mono text-parchment/60">Rang-Manch Palette & Typography</p></div>
+<button id="btn-close-theme" class="btn-ghost px-3 py-2 rounded-lg" aria-label="Close theme studio">✕</button>
+</div>
+
+<div class="p-6 space-y-6 overflow-y-auto flex-1 text-sm">
+<div>
+<label class="block text-xs font-bold uppercase tracking-wider text-amber mb-2">Preset Atmospheres</label>
+<div class="grid grid-cols-2 gap-2" id="theme-preset-grid">
+<button data-theme-set="dark" class="theme-preset-btn flex items-center gap-2 p-3 rounded-xl border border-parchment/15 hover:border-amber transition text-left active-theme">
+<span class="w-5 h-5 rounded-full bg-[#0B0A10] border border-[#FFB347] shrink-0"></span>
+<div><p class="font-bold text-xs">🌑 Dark (Default)</p><p class="text-[10px] opacity-60">Ink & Amber Glow</p></div>
+</button>
+<button data-theme-set="light" class="theme-preset-btn flex items-center gap-2 p-3 rounded-xl border border-parchment/15 hover:border-amber transition text-left">
+<span class="w-5 h-5 rounded-full bg-[#FAF3E4] border border-[#D4820A] shrink-0"></span>
+<div><p class="font-bold text-xs">🌕 Light Mode</p><p class="text-[10px] opacity-60">Warm Parchment</p></div>
+</button>
+<button data-theme-set="vermilion" class="theme-preset-btn flex items-center gap-2 p-3 rounded-xl border border-parchment/15 hover:border-amber transition text-left">
+<span class="w-5 h-5 rounded-full bg-[#1A0808] border border-[#E74C3C] shrink-0"></span>
+<div><p class="font-bold text-xs">🔴 Vermilion Night</p><p class="text-[10px] opacity-60">Rang-Manch Drama</p></div>
+</button>
+<button data-theme-set="jade" class="theme-preset-btn flex items-center gap-2 p-3 rounded-xl border border-parchment/15 hover:border-amber transition text-left">
+<span class="w-5 h-5 rounded-full bg-[#08140E] border border-[#6EE7B7] shrink-0"></span>
+<div><p class="font-bold text-xs">🌿 Jade Forest</p><p class="text-[10px] opacity-60">Bamboo & Mist</p></div>
+</button>
+<button data-theme-set="moon" class="theme-preset-btn flex items-center gap-2 p-3 rounded-xl border border-parchment/15 hover:border-amber transition text-left col-span-2">
+<span class="w-5 h-5 rounded-full bg-[#080914] border border-[#93C5FD] shrink-0"></span>
+<div><p class="font-bold text-xs">🌙 Deep Moon</p><p class="text-[10px] opacity-60">Midnight Indigo</p></div>
+</button>
+</div>
+</div>
+
+<div class="border-t border-parchment/10 pt-5">
+<div class="flex items-center justify-between mb-3">
+<label class="text-xs font-bold uppercase tracking-wider text-amber">Custom Mode Palette</label>
+<span id="custom-badge" class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-parchment/15 text-parchment/70">Preset Mode</span>
+</div>
+<div class="space-y-3 font-mono text-xs">
+<div class="flex items-center justify-between bg-ink/50 border border-parchment/10 rounded-xl p-2.5">
+<div><p class="font-sans font-medium text-xs">Background (Ink)</p><span class="opacity-50 text-[11px]" id="val-color-ink">#0B0A10</span></div>
+<input type="color" id="picker-ink" value="#0B0A10" class="w-9 h-9 rounded-lg border-0 cursor-pointer bg-transparent">
+</div>
+<div class="flex items-center justify-between bg-ink/50 border border-parchment/10 rounded-xl p-2.5">
+<div><p class="font-sans font-medium text-xs">Flame Glow (Amber)</p><span class="opacity-50 text-[11px]" id="val-color-amber">#FFB347</span></div>
+<input type="color" id="picker-amber" value="#FFB347" class="w-9 h-9 rounded-lg border-0 cursor-pointer bg-transparent">
+</div>
+<div class="flex items-center justify-between bg-ink/50 border border-parchment/10 rounded-xl p-2.5">
+<div><p class="font-sans font-medium text-xs">Text & Paper (Parchment)</p><span class="opacity-50 text-[11px]" id="val-color-parchment">#F4E8D0</span></div>
+<input type="color" id="picker-parchment" value="#F4E8D0" class="w-9 h-9 rounded-lg border-0 cursor-pointer bg-transparent">
+</div>
+<div class="flex items-center justify-between bg-ink/50 border border-parchment/10 rounded-xl p-2.5">
+<div><p class="font-sans font-medium text-xs">Drama Accent (Vermilion)</p><span class="opacity-50 text-[11px]" id="val-color-vermilion">#C8462B</span></div>
+<input type="color" id="picker-vermilion" value="#C8462B" class="w-9 h-9 rounded-lg border-0 cursor-pointer bg-transparent">
+</div>
+<div class="flex items-center justify-between bg-ink/50 border border-parchment/10 rounded-xl p-2.5">
+<div><p class="font-sans font-medium text-xs">Stage Shadow (Indigo)</p><span class="opacity-50 text-[11px]" id="val-color-indigo">#10132A</span></div>
+<input type="color" id="picker-indigo" value="#10132A" class="w-9 h-9 rounded-lg border-0 cursor-pointer bg-transparent">
+</div>
+</div>
+</div>
+
+<div class="border-t border-parchment/10 pt-5">
+<label class="block text-xs font-bold uppercase tracking-wider text-amber mb-3">Theatrical Typography</label>
+<div class="space-y-3">
+<div>
+<label class="block text-xs font-medium text-parchment/70 mb-1">Display Headings</label>
+<select id="select-font-display" class="w-full bg-ink border border-parchment/15 rounded-xl px-3 py-2 text-xs font-mono">
+<option value="Fraunces">Fraunces (Theatrical Serif)</option>
+<option value="Crimson Pro">Crimson Pro (Old World Literary)</option>
+<option value="Lora">Lora (Contemporary Storybook)</option>
+<option value="Georgia">Georgia (Warm Editorial)</option>
+<option value="Josefin Sans">Josefin Sans (Art Deco Geometry)</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-medium text-parchment/70 mb-1">Body Reading</label>
+<select id="select-font-body" class="w-full bg-ink border border-parchment/15 rounded-xl px-3 py-2 text-xs font-mono">
+<option value="Inter">Inter (Ultra-clean sans)</option>
+<option value="DM Sans">DM Sans (Humanist geometric)</option>
+<option value="Lora">Lora (Literary serif reading)</option>
+<option value="system-ui">System UI default</option>
+</select>
+</div>
+</div>
+</div>
+
+<div class="border-t border-parchment/10 pt-4 flex gap-2">
+<button id="btn-theme-reset" class="flex-1 py-2.5 rounded-xl bg-ink/70 border border-parchment/20 text-xs font-bold hover:bg-parchment/10 transition">↺ Reset</button>
+<button id="btn-theme-save" class="flex-1 py-2.5 rounded-xl bg-amber text-ink text-xs font-bold hover:opacity-90 transition">✓ Keep & Close</button>
+</div>
+</div>
+</div>
+
+<!-- HELP MODAL -->
+<div id="help-modal" class="fixed inset-0 z-[140] hidden items-center justify-center bg-black/80 backdrop-blur p-4" role="dialog" aria-label="Keyboard shortcuts">
+<div class="ink-card max-w-md w-full rounded-2xl p-7">
+<div class="flex items-center justify-between mb-4"><h2 class="font-display font-bold text-2xl">⌨️ Shortcuts</h2><button id="btn-close-help" class="btn-ghost px-3 py-2 rounded-lg" aria-label="Close">✕</button></div>
+<div class="grid grid-cols-2 gap-2 text-sm font-mono">
+<span class="bg-ink rounded-lg px-3 py-2">1–8 poses</span><span class="bg-ink rounded-lg px-3 py-2">T tour</span>
+<span class="bg-ink rounded-lg px-3 py-2">P theme studio</span><span class="bg-ink rounded-lg px-3 py-2">C cinema</span>
+<span class="bg-ink rounded-lg px-3 py-2">Esc exit</span><span class="bg-ink rounded-lg px-3 py-2">? this panel</span>
+</div>
+</div>
+</div>
+
+<!-- HUD -->
+<div id="hud" class="debug-only fixed bottom-3 left-3 z-[110] font-mono text-[10px] bg-black/70 backdrop-blur border border-parchment/15 rounded-xl px-3 py-2 flex gap-3" aria-hidden="true">
+<span>fps <b id="hud-fps" class="text-amber">—</b></span>
+<span>mode <b id="hud-mode" class="text-amber">virtual</b></span>
+<span>pose <b id="hud-pose" class="text-amber">1</b></span>
+</div>
+
+<div id="toasts" class="fixed bottom-4 right-4 z-[150] space-y-2 max-w-xs" aria-live="polite"></div>
+<video id="webcam-video" class="hidden" playsinline muted aria-hidden="true"></video>
+
+<!-- Clean ES Module Script Tag -->
+<script type="module" src="./src/app.js"></script>
+</body>
+</html>

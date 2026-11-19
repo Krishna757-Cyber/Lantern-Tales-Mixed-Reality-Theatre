@@ -1,0 +1,100 @@
+/* ================================================================
+   LANTERN TALES — STAGE, HUD & INTERACTION STYLING
+================================================================ */
+
+#stage {
+  cursor: crosshair;
+  touch-action: none;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 179, 71, 0.08) 0%, rgba(0, 0, 0, 0.95) 75%);
+}
+
+#stage-wrap {
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), inset 0 0 40px rgba(255, 179, 71, 0.05);
+}
+
+.letterbox {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 7vh;
+  background: #000;
+  z-index: 95;
+  display: none;
+}
+body.cinema .letterbox {
+  display: block;
+}
+body.cinema #site-nav,
+body.cinema #sidebar-play,
+body.cinema footer,
+body.cinema .debug-only {
+  display: none !important;
+}
+body.cinema #stage-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  border-radius: 0 !important;
+}
+
+.pose-btn {
+  transition: all 0.2s ease;
+}
+.pose-btn.active {
+  box-shadow: 0 0 20px var(--amber);
+  border-color: var(--amber) !important;
+}
+
+.mode-btn {
+  transition: all 0.2s ease;
+}
+.mode-btn.active {
+  background: var(--amber);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* Judge smoke test table */
+table.judge-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+table.judge-table th {
+  background: var(--surface-raised);
+  color: var(--amber);
+  font-weight: 700;
+  text-align: left;
+  padding: 0.9rem 1rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+table.judge-table td {
+  padding: 0.9rem 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+  vertical-align: top;
+}
+table.judge-table tr:hover td {
+  background: var(--amber-pale);
+}
+
+.smoke-pass { color: #7ee787; }
+.smoke-fail { color: #ff7b72; }
+.smoke-warn { color: #ffb347; }
+.smoke-info { color: #9fb3ff; }
+
+/* HUD */
+#hud {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* Toast */
+#toasts > div {
+  animation: toastIn 0.25s ease-out;
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.95); }
+  to { opacity: 1; transform: none; }
+}

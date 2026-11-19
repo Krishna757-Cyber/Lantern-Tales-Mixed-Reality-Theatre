@@ -1,0 +1,28 @@
+{
+  "name": "lantern-tales",
+  "version": "1.0.0",
+  "description": "Lantern Tales (Chhaya) — A seated, controller-free mixed-reality shadow theatre for WebXR, webcam, and desktop.",
+  "main": "server/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js",
+    "test": "node tests/run-all.js"
+  },
+  "keywords": [
+    "webxr",
+    "shadow-theatre",
+    "hand-tracking",
+    "mediapipe",
+    "threejs",
+    "meta-quest",
+    "full-stack"
+  ],
+  "author": "Lantern Tales Team",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "ws": "^8.18.0"
+  }
+}

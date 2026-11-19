@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rang Manch — Virtual Kathputli Theatre | Lantern Tales</title>
+<meta name="description" content="Experience Rajasthani Kathputli string puppetry in a 3D Haveli courtyard. Seated, bare-hands or mouse/webcam.">
+<link rel="icon" type="image/png" href="../public/lantern-tales-logo.png">
+<link rel="apple-touch-icon" href="../public/lantern-tales-logo.png">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<link rel="stylesheet" href="../src/styles/theme.css">
+<link rel="stylesheet" href="../src/styles/rangmanch.css">
+
+<style>
+  .theatre-canvas-container {
+    perspective: 1200px;
+    touch-action: none;
+  }
+  .marigold-garland {
+    background-image: radial-gradient(circle at 50% 50%, #E3A018 25%, #C2185B 65%, transparent 75%);
+    background-size: 24px 24px;
+  }
+  .taal-marigold-petal {
+    transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.2s;
+  }
+  .taal-marigold-petal.bloomed {
+    transform: scale(1.25);
+    filter: drop-shadow(0 0 8px #FFD700);
+  }
+</style>
+</head>
+
+<body class="bg-[#0B0A10] text-[#F4E8D0] font-sans antialiased overflow-x-hidden">
+<a href="#theatre-stage-wrap" class="skip-link">Skip to stage</a>
+
+<!-- Navigation Header -->
+<header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[#0B0A10]/90 border-b border-[#F4E8D0]/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <a href="../index.html" class="flex items-center gap-3 group">
+      <div class="relative w-10 h-10 rounded-xl overflow-hidden shadow-lg border border-[#E3A018]/60 group-hover:border-[#E3A018] transition-all flex-shrink-0 bg-[#0B0A10]">
+        <img src="../public/lantern-tales-logo.png" alt="Lantern Tales Logo" class="w-full h-full object-cover">
+      </div>
+      <div>
+        <span class="font-display font-black text-lg tracking-tight leading-tight">Lantern <span class="text-[#E3A018]">Tales</span></span>
+        <span class="hidden sm:inline-block text-[10px] uppercase font-mono px-2 py-0.5 ml-2 rounded bg-[#C2185B]/20 text-[#C2185B] border border-[#C2185B]/30">Rang Manch</span>
+      </div>
+    </a>
+
+    <div class="flex items-center gap-2">
+      <button id="btn-immersion-toggle" class="btn-ghost px-3 py-1.5 rounded-lg text-xs font-mono border border-[#F4E8D0]/20 flex items-center gap-1.5">
+        <span id="immersion-icon">🏛️</span>
+        <span id="immersion-label">Haveli Courtyard (VR)</span>
+      </button>
+
+      <button id="btn-audio-toggle" class="btn-ghost px-3 py-1.5 rounded-lg text-xs font-mono border border-[#F4E8D0]/20" aria-label="Toggle Dholak Audio">
+        <span id="audio-icon">🔊</span> Dholak
+      </button>
+
+      <a href="../index.html?theatre=1" class="btn-primary text-xs px-3 sm:px-4 py-1.5 rounded-lg font-bold">
+        🥽 Launch on Quest
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- Main Theatre Experience -->
+<main class="pt-20 pb-16 px-4 max-w-7xl mx-auto min-h-screen flex flex-col items-center">
+  
+  <!-- Title & Dedication Banner -->
+  <div class="text-center max-w-3xl mx-auto my-6">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E3A018]/15 border border-[#E3A018]/30 text-[#E3A018] text-xs font-mono font-medium mb-3">
+      <span>✨ Web Audience Mode • Move Mouse / Webcam to Puppeteer</span>
+    </div>
+    <h1 class="font-display font-black text-4xl sm:text-6xl text-[#F4E8D0] tracking-tight">
+      Rajasthani <span class="text-[#E3A018]">Kathputli</span>
+    </h1>
+    <p class="mt-2 text-sm text-[#F4E8D0]/70 italic font-display">
+      “In honour of the kathputli puppeteers of Rajasthan, whose fingers hold centuries of living rhythm and light.”
+    </p>
+  </div>
+
+  <!-- 3D Interactive Stage Canvas Wrap -->
+  <div id="theatre-stage-wrap" class="theatre-canvas-container relative w-full max-w-5xl aspect-[16/10] sm:aspect-[16/9] bg-[#0E0C16] rounded-3xl border border-[#E3A018]/30 shadow-2xl overflow-hidden" tabindex="0" role="region" aria-label="3D Kathputli Stage">
+    <canvas id="theatre-canvas" class="w-full h-full block"></canvas>
+
+    <!-- Overlay Stage Controls -->
+    <div class="absolute bottom-4 left-4 right-4 flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
+      
+      <!-- Act Selector -->
+      <div class="flex items-center gap-1.5 bg-[#0B0A10]/80 backdrop-blur-md p-1.5 rounded-2xl border border-[#F4E8D0]/15">
+        <button class="act-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-[#E3A018] text-[#0B0A10] font-bold" data-act="anarkali">💃 Anarkali</button>
+        <button class="act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-[#F4E8D0] hover:bg-[#F4E8D0]/10" data-act="ghodi">🐎 Ghodi</button>
+        <button class="act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-[#F4E8D0] hover:bg-[#F4E8D0]/10" data-act="sapera">🐍 Sapera</button>
+        <button class="act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-[#F4E8D0] hover:bg-[#F4E8D0]/10" data-act="amarsingh">🛡️ Amar Singh</button>
+        <button class="act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-[#F4E8D0] hover:bg-[#F4E8D0]/10" data-act="mela">🏮 Mela</button>
+      </div>
+
+      <!-- Marigold Taal Meter -->
+      <div class="flex items-center gap-2 bg-[#0B0A10]/80 backdrop-blur-md px-4 py-2 rounded-2xl border border-[#E3A018]/30" title="Marigold Taal Meter — Hit plucks on beat">
+        <span class="text-xs font-mono font-bold text-[#E3A018]">TAAL:</span>
+        <div id="taal-marigold-ring" class="flex items-center gap-1">
+          <span class="taal-marigold-petal text-sm bloomed">🌼</span>
+          <span class="taal-marigold-petal text-sm bloomed">🌼</span>
+          <span class="taal-marigold-petal text-sm bloomed">🌼</span>
+          <span class="taal-marigold-petal text-sm">🌼</span>
+          <span class="taal-marigold-petal text-sm">🌼</span>
+          <span class="taal-marigold-petal text-sm">🌼</span>
+          <span class="taal-marigold-petal text-sm">🌼</span>
+          <span class="taal-marigold-petal text-sm">🌼</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2">
+        <button id="btn-curtain-toggle" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-[#C2185B] text-white hover:brightness-110 shadow-lg">
+          🎪 Curtain Call
+        </button>
+        <button id="btn-spin-puppet" class="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-[#E3A018] text-[#0B0A10] hover:brightness-110 shadow-lg">
+          🌸 Spin Chakkar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Meet the Maker Dedication Card -->
+  <div class="w-full max-w-5xl mt-12 bg-gradient-to-r from-[#1E0A0A] via-[#2A0E0E] to-[#1E0A0A] border border-[#E3A018]/30 rounded-3xl p-8 shadow-xl">
+    <div class="flex flex-col md:flex-row items-start justify-between gap-6">
+      <div class="flex-1">
+        <span class="text-xs font-mono font-bold tracking-widest text-[#E3A018] uppercase">Living Heritage</span>
+        <h2 class="font-display font-black text-2xl text-[#FDF5E6] mt-1 mb-3">Meet the Maker: The Bhat Puppeteer Tradition</h2>
+        <p class="text-sm text-[#FDF5E6]/80 leading-relaxed">
+          Kathputli is a sacred secular oral tradition preserved by the Bhat community of Marwar. Each doll is hand-hewn with simple adzes from local Rohida wood, adorned with bandhani tie-dye fabrics, and given voice by a reed mouth-whistle (*Boli*). We dedicate this virtual recreation to the living masters who continue this vibrant art form.
+        </p>
+      </div>
+      <div class="bg-black/40 border border-[#E3A018]/20 rounded-2xl p-5 min-w-[240px]">
+        <p class="text-xs font-mono text-[#E3A018] font-bold">📜 CULTURAL INTEGRITY</p>
+        <ul class="text-xs text-[#FDF5E6]/70 mt-2 space-y-1.5">
+          <li>✓ No deity representations</li>
+          <li>✓ Non-violent folk legends only</li>
+          <li>✓ Procedural Boli reed voice</li>
+          <li>✓ Sangeet Natak Akademi documented</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+  import { KathputliRig } from '../src/kathputli/rig.js';
+  import { KathputliVoice } from '../src/kathputli/voice.js';
+  import { KathputliRhythm } from '../src/kathputli/rhythm.js';
+  import { KathputliController } from '../src/kathputli/controls.js';
+  import { RangManchHall } from '../src/theatre/hall.js';
+  import { TableTheatre } from '../src/theatre/tableTheatre.js';
+  import { TheatreTransition } from '../src/theatre/transition.js';
+
+  const canvas = document.getElementById('theatre-canvas');
+  const container = document.getElementById('theatre-stage-wrap');
+  
+  if (canvas && container && typeof THREE !== 'undefined') {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+    camera.position.set(0, 1.4, 3.8);
+    camera.lookAt(0, 1.1, 0);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.setSize(container.clientWidth, container.clientHeight);
+
+    // Initial Rang Manch Hall Environment
+    const hall = new RangManchHall(THREE, scene);
+    
+    // Puppet Rig & Controllers
+    const puppet = new KathputliRig({ name: 'Anarkali', scale: 1.0 });
+    const puppetMesh = puppet.buildThreeMesh(THREE);
+    if (puppetMesh) scene.add(puppetMesh);
+
+    const controller = new KathputliController(puppet, { mode: 'mouse' });
+    const voice = new KathputliVoice();
+    const rhythm = new KathputliRhythm();
+    const transition = new TheatreTransition();
+
+    let isVRMode = true;
+    let isAudioOn = false;
+
+    // Mouse tracking over stage
+    container.addEventListener('pointermove', (e) => {
+      const rect = container.getBoundingClientRect();
+      const nx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+      const ny = -((e.clientY - rect.top) / rect.height - 0.5) * 2;
+      controller.updateFromMouse(nx, ny, false);
+      rhythm.setSpeedMultiplier(1.0 + Math.abs(nx) * 0.8);
+    });
+
+    container.addEventListener('pointerdown', () => {
+      voice.playSqueak('nod', puppet.headTilt);
+      if (rhythm.checkBeatHit()) {
+        voice.spawnIconBubble('✨');
+      }
+    });
+
+    document.getElementById('btn-spin-puppet')?.addEventListener('click', () => {
+      puppet.skirtAngularVelocity += 8.0;
+      voice.playSqueak('spin', 0.2);
+    });
+
+    document.getElementById('btn-curtain-toggle')?.addEventListener('click', () => {
+      if (hall.curtain.isOpen) {
+        hall.curtain.close();
+      } else {
+        hall.curtain.open();
+        hall.triggerApplause();
+        voice.playSqueak('bow', -0.3);
+      }
+    });
+
+    document.getElementById('btn-audio-toggle')?.addEventListener('click', () => {
+      isAudioOn = !isAudioOn;
+      const icon = document.getElementById('audio-icon');
+      if (isAudioOn) {
+        rhythm.start();
+        if (icon) icon.textContent = '🔊';
+      } else {
+        rhythm.stop();
+        if (icon) icon.textContent = '🔇';
+      }
+    });
+
+    document.getElementById('btn-immersion-toggle')?.addEventListener('click', () => {
+      isVRMode = !isVRMode;
+      const label = document.getElementById('immersion-label');
+      transition.fadeDissolve(isVRMode ? 'VR' : 'MR', isVRMode ? 'MR' : 'VR', 600, () => {
+        if (label) label.textContent = isVRMode ? 'Haveli Courtyard (VR)' : 'Tabletop Proscenium (MR)';
+      });
+    });
+
+    // Act buttons
+    document.querySelectorAll('.act-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.act-btn').forEach(b => {
+          b.className = 'act-btn px-3 py-1.5 rounded-xl text-xs font-medium text-[#F4E8D0] hover:bg-[#F4E8D0]/10';
+        });
+        btn.className = 'act-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-[#E3A018] text-[#0B0A10] font-bold';
+        voice.playSqueak('greet', 0);
+      });
+    });
+
+    // Window resize
+    window.addEventListener('resize', () => {
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h, false);
+    });
+
+    // Render loop
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const dt = clock.getDelta();
+      const elapsed = clock.elapsedTime;
+
+      hall.update(dt, elapsed);
+      puppet.update(dt);
+      renderer.render(scene, camera);
+    }
+    animate();
+    hall.curtain.open();
+  }
+</script>
+</body>
+</html>

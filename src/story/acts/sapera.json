@@ -1,0 +1,66 @@
+{
+  "id": "sapera",
+  "title": "Sapera",
+  "subtitle": "The Melodic Serpent's Dance",
+  "puppetType": "snake",
+  "durationSeconds": 180,
+  "beats": [
+    {
+      "beat": 1,
+      "time": "0:00 — 0:30",
+      "name": "The Drone of the Been",
+      "instructionIcon": "🎵",
+      "prompt": "Listen as the double-reed gourd flute begins its ancient hypnotic drone.",
+      "targetAction": "drone",
+      "targetPose": { "x": 0, "y": 1.45, "roll": 0 },
+      "soundCue": "greet"
+    },
+    {
+      "beat": 2,
+      "time": "0:30 — 1:05",
+      "name": "Rising from the Wicker Basket",
+      "instructionIcon": "🧺",
+      "prompt": "Gently raise your hand; the emerald cloth serpent emerges with flared hood.",
+      "targetAction": "rise",
+      "targetPose": { "x": 0, "y": 1.62, "roll": 0.1 },
+      "soundCue": "nod"
+    },
+    {
+      "beat": 3,
+      "time": "1:05 — 1:50",
+      "name": "Swaying in Harmony",
+      "instructionIcon": "🌿",
+      "prompt": "Sway your hand slowly left and right in time with the flute melody.",
+      "targetAction": "sway",
+      "targetPose": { "x": 0.15, "y": 1.60, "roll": -0.25 },
+      "soundCue": "spin"
+    },
+    {
+      "beat": 4,
+      "time": "1:50 — 2:25",
+      "name": "A Peaceful Salutation",
+      "instructionIcon": "🤝",
+      "prompt": "The serpent dips its hood in a respectful bow, harming no one.",
+      "targetAction": "bow",
+      "targetPose": { "x": 0, "y": 1.48, "roll": 0.35 },
+      "soundCue": "bow"
+    },
+    {
+      "beat": 5,
+      "time": "2:25 — 3:00",
+      "name": "Slumber in the Basket",
+      "instructionIcon": "✨",
+      "prompt": "Lower your hand as the serpent coils gently back to rest amid applause.",
+      "targetAction": "exit",
+      "targetPose": { "x": 0, "y": 1.35, "roll": 0 },
+      "soundCue": "cheer"
+    }
+  ],
+  "meetTheMaker": {
+    "title": "Meet the Maker: The Cloth Serpent",
+    "icon": "🐍",
+    "artisanCraft": "Pleated Cotton Tubes & Gold Sequin Eyes",
+    "description": "Constructed from alternating bands of indigo and emerald cotton scraps, the Kathputli snake relies on flexible cloth rings stuffed with soft wool rather than rigid wood. Two subtle threads anchored to the snout and hood allow the master puppeteer to create smooth sinuous undulations with minimal hand motion.",
+    "communityDedication": "Honouring the age-old oral folklore of Rajasthan."
+  }
+}

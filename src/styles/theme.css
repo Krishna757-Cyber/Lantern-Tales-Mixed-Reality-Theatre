@@ -1,0 +1,368 @@
+/* ================================================================
+   LANTERN TALES — THEME DESIGN SYSTEM
+   Modes: dark (default) | light | vermilion | jade | moon | custom
+   All tokens are CSS custom properties; JS modifies or swaps them.
+================================================================ */
+
+/* ── Dark theme (default) ── */
+:root, [data-theme="dark"] {
+  --bg-page: #0B0A10;
+  --ink: #0B0A10;
+  --ink-mid: #14121f;
+  --ink-soft: #1e1b2e;
+  --amber: #FFB347;
+  --amber-pale: rgba(255, 179, 71, 0.15);
+  --parchment: #F4E8D0;
+  --parchment-dim: rgba(244, 232, 208, 0.75);
+  --parchment-faint: rgba(244, 232, 208, 0.12);
+  --indigo: #10132A;
+  --vermilion: #C8462B;
+  --surface: #14121f;
+  --surface-raised: #1e1b2e;
+  --border: rgba(244, 232, 208, 0.15);
+  --border-strong: rgba(244, 232, 208, 0.30);
+  --text-primary: #F4E8D0;
+  --text-secondary: rgba(244, 232, 208, 0.85);
+  --text-muted: rgba(244, 232, 208, 0.55);
+  --shadow-color: rgba(0, 0, 0, 0.7);
+  --glow: 0 0 60px rgba(255, 179, 71, 0.35), 0 0 140px rgba(255, 179, 71, 0.15);
+  --nav-bg: rgba(11, 10, 16, 0.95);
+  --card-ink-from: #181528;
+  --card-ink-to: #0e0c16;
+  --scrollbar-bg: #0B0A10;
+  --scrollbar-thumb: #2a2540;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+/* ── Light theme (Warm Parchment) ── */
+[data-theme="light"] {
+  --bg-page: #FAF3E4;
+  --ink: #FAF3E4;
+  --ink-mid: #F4ECE0;
+  --ink-soft: #EBE0CF;
+  --amber: #C97204;
+  --amber-pale: rgba(201, 114, 4, 0.14);
+  --parchment: #2C1A0E;
+  --parchment-dim: rgba(44, 26, 14, 0.82);
+  --parchment-faint: rgba(44, 26, 14, 0.08);
+  --indigo: #E8EAF6;
+  --vermilion: #B03020;
+  --surface: #FFFFFF;
+  --surface-raised: #F5EBDC;
+  --border: rgba(44, 26, 14, 0.15);
+  --border-strong: rgba(44, 26, 14, 0.30);
+  --text-primary: #2C1A0E;
+  --text-secondary: rgba(44, 26, 14, 0.85);
+  --text-muted: rgba(44, 26, 14, 0.58);
+  --shadow-color: rgba(44, 26, 14, 0.12);
+  --glow: 0 0 40px rgba(201, 114, 4, 0.25), 0 0 80px rgba(201, 114, 4, 0.10);
+  --nav-bg: rgba(250, 243, 228, 0.95);
+  --card-ink-from: #FFFFFF;
+  --card-ink-to: #F5EBDC;
+  --scrollbar-bg: #FAF3E4;
+  --scrollbar-thumb: #c8a87a;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+/* ── Vermilion Night ── */
+[data-theme="vermilion"] {
+  --bg-page: #1E0A0A;
+  --ink: #1E0A0A;
+  --ink-mid: #2A0E0E;
+  --ink-soft: #3D1616;
+  --amber: #FF9F43;
+  --amber-pale: rgba(255, 159, 67, 0.18);
+  --parchment: #FDF5E6;
+  --parchment-dim: rgba(253, 245, 230, 0.80);
+  --parchment-faint: rgba(253, 245, 230, 0.14);
+  --indigo: #2D0C15;
+  --vermilion: #E74C3C;
+  --surface: #2A0E0E;
+  --surface-raised: #3D1616;
+  --border: rgba(253, 245, 230, 0.18);
+  --border-strong: rgba(253, 245, 230, 0.35);
+  --text-primary: #FDF5E6;
+  --text-secondary: rgba(253, 245, 230, 0.88);
+  --text-muted: rgba(253, 245, 230, 0.55);
+  --shadow-color: rgba(30, 10, 10, 0.85);
+  --glow: 0 0 60px rgba(231, 76, 60, 0.4), 0 0 140px rgba(255, 159, 67, 0.25);
+  --nav-bg: rgba(30, 10, 10, 0.95);
+  --card-ink-from: #351313;
+  --card-ink-to: #220B0B;
+  --scrollbar-bg: #1E0A0A;
+  --scrollbar-thumb: #5e2020;
+  --font-display: 'Crimson Pro', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+}
+
+/* ── Jade Forest ── */
+[data-theme="jade"] {
+  --bg-page: #091811;
+  --ink: #091811;
+  --ink-mid: #102B1E;
+  --ink-soft: #183D2B;
+  --amber: #6EE7B7;
+  --amber-pale: rgba(110, 231, 183, 0.18);
+  --parchment: #E8F5E9;
+  --parchment-dim: rgba(232, 245, 233, 0.80);
+  --parchment-faint: rgba(232, 245, 233, 0.14);
+  --indigo: #092218;
+  --vermilion: #E67E22;
+  --surface: #102B1E;
+  --surface-raised: #183D2B;
+  --border: rgba(232, 245, 233, 0.18);
+  --border-strong: rgba(232, 245, 233, 0.35);
+  --text-primary: #E8F5E9;
+  --text-secondary: rgba(232, 245, 233, 0.88);
+  --text-muted: rgba(232, 245, 233, 0.55);
+  --shadow-color: rgba(9, 24, 17, 0.85);
+  --glow: 0 0 60px rgba(110, 231, 183, 0.35), 0 0 140px rgba(110, 231, 183, 0.15);
+  --nav-bg: rgba(9, 24, 17, 0.95);
+  --card-ink-from: #153827;
+  --card-ink-to: #0c1f16;
+  --scrollbar-bg: #091811;
+  --scrollbar-thumb: #235239;
+  --font-display: 'Lora', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+/* ── Deep Moon ── */
+[data-theme="moon"] {
+  --bg-page: #0B0C1E;
+  --ink: #0B0C1E;
+  --ink-mid: #131535;
+  --ink-soft: #1C1F4D;
+  --amber: #93C5FD;
+  --amber-pale: rgba(147, 197, 253, 0.18);
+  --parchment: #F0F4F8;
+  --parchment-dim: rgba(240, 244, 248, 0.80);
+  --parchment-faint: rgba(240, 244, 248, 0.14);
+  --indigo: #1E1B4B;
+  --vermilion: #EC4899;
+  --surface: #131535;
+  --surface-raised: #1C1F4D;
+  --border: rgba(240, 244, 248, 0.18);
+  --border-strong: rgba(240, 244, 248, 0.35);
+  --text-primary: #F0F4F8;
+  --text-secondary: rgba(240, 244, 248, 0.88);
+  --text-muted: rgba(240, 244, 248, 0.55);
+  --shadow-color: rgba(11, 12, 30, 0.90);
+  --glow: 0 0 60px rgba(147, 197, 253, 0.4), 0 0 140px rgba(147, 197, 253, 0.2);
+  --nav-bg: rgba(11, 12, 30, 0.95);
+  --card-ink-from: #191c47;
+  --card-ink-to: #0e0f26;
+  --scrollbar-bg: #0B0C1E;
+  --scrollbar-thumb: #2a3068;
+  --font-display: 'Josefin Sans', sans-serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+}
+
+/* ── Custom Theme Defaults (Inherits inline styles) ── */
+[data-theme="custom"] {
+  --bg-page: var(--ink);
+  --ink-mid: color-mix(in srgb, var(--ink) 85%, white 15%);
+  --ink-soft: color-mix(in srgb, var(--ink) 70%, white 30%);
+  --amber-pale: color-mix(in srgb, var(--amber) 20%, transparent);
+  --parchment-dim: color-mix(in srgb, var(--parchment) 80%, transparent);
+  --parchment-faint: color-mix(in srgb, var(--parchment) 15%, transparent);
+  --surface: color-mix(in srgb, var(--ink) 90%, white 10%);
+  --surface-raised: color-mix(in srgb, var(--ink) 80%, white 20%);
+  --border: color-mix(in srgb, var(--parchment) 20%, transparent);
+  --border-strong: color-mix(in srgb, var(--parchment) 35%, transparent);
+  --text-primary: var(--parchment);
+  --text-secondary: color-mix(in srgb, var(--parchment) 85%, transparent);
+  --text-muted: color-mix(in srgb, var(--parchment) 55%, transparent);
+  --shadow-color: rgba(0, 0, 0, 0.7);
+  --glow: 0 0 60px var(--amber-pale), 0 0 120px var(--amber-pale);
+  --nav-bg: color-mix(in srgb, var(--ink) 95%, transparent);
+  --card-ink-from: color-mix(in srgb, var(--ink) 85%, white 15%);
+  --card-ink-to: var(--ink);
+  --scrollbar-bg: var(--ink);
+  --scrollbar-thumb: color-mix(in srgb, var(--ink) 60%, white 40%);
+}
+
+/* ================================================================
+   BASE RESETS, TYPOGRAPHY & VISIBILITY ENFORCEMENT
+================================================================ */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html.reduced-motion { scroll-behavior: auto; }
+
+body {
+  background: var(--bg-page) !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Button & input font/color inheritance */
+button, input, select, textarea {
+  color: inherit;
+  font-family: inherit;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+}
+
+::selection {
+  background: var(--amber);
+  color: var(--ink);
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 8px;
+  border: 2px solid var(--scrollbar-bg);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--amber); }
+
+:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--amber);
+  color: var(--ink);
+  padding: 0.75rem 1.25rem;
+  font-weight: 700;
+  z-index: 200;
+  border-radius: 0 0 12px 0;
+}
+.skip-link:focus { left: 0; }
+
+/* ================================================================
+   NAVIGATION & CONTRAST FIXES FOR ALL THEMES
+================================================================ */
+#site-nav {
+  background: var(--nav-bg) !important;
+  border-bottom: 1px solid var(--border-strong) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.nav-link {
+  color: var(--text-primary) !important;
+  opacity: 0.82;
+  transition: opacity 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+.nav-link:hover, .nav-link:focus-visible {
+  opacity: 1 !important;
+  color: var(--amber) !important;
+  background: var(--amber-pale);
+}
+.nav-link.text-amber, .nav-link[data-view].text-amber {
+  opacity: 1 !important;
+  color: var(--amber) !important;
+  font-weight: 700;
+}
+
+#btn-theme-toggle, #btn-theme-customize {
+  background: var(--surface-raised) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-strong) !important;
+}
+#btn-theme-toggle:hover, #btn-theme-customize:hover {
+  border-color: var(--amber) !important;
+  color: var(--amber) !important;
+}
+#theme-name {
+  color: var(--text-primary) !important;
+}
+
+#fps-pill {
+  background: var(--surface-raised) !important;
+  border-color: var(--border) !important;
+  color: var(--text-secondary) !important;
+}
+
+.btn-primary {
+  color: #0B0A10 !important;
+}
+
+/* ================================================================
+   DYNAMIC HERO VIGNETTE (Adapts smoothly to each theme)
+================================================================ */
+.hero-vignette {
+  background: radial-gradient(ellipse at 50% 65%, transparent 28%, color-mix(in srgb, var(--bg-page) 55%, transparent) 70%, var(--bg-page) 100%),
+              linear-gradient(180deg, color-mix(in srgb, var(--bg-page) 75%, transparent) 0%, transparent 25%, transparent 70%, var(--bg-page) 100%) !important;
+  transition: background 0.35s ease;
+}
+
+/* ================================================================
+   LIGHT THEME OVERRIDES (High contrast & clean reading)
+================================================================ */
+[data-theme="light"] body {
+  background: #FAF3E4 !important;
+  color: #2C1A0E !important;
+}
+[data-theme="light"] .ink-card {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5ECDA 100%) !important;
+  border: 1px solid rgba(44, 26, 14, 0.2) !important;
+  color: #2C1A0E !important;
+  box-shadow: 0 10px 30px rgba(44, 26, 14, 0.12) !important;
+}
+[data-theme="light"] .ink-card h2,
+[data-theme="light"] .ink-card h3,
+[data-theme="light"] .ink-card h4 {
+  color: #2C1A0E !important;
+}
+[data-theme="light"] .ink-card p,
+[data-theme="light"] .ink-card span {
+  color: rgba(44, 26, 14, 0.85);
+}
+[data-theme="light"] .parchment-card {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(44, 26, 14, 0.2) !important;
+  color: #2C1A0E !important;
+}
+[data-theme="light"] #flags-drawer,
+[data-theme="light"] #theme-drawer {
+  background: #F0E6CE !important;
+  border-left-color: rgba(44, 26, 14, 0.25) !important;
+  color: #2C1A0E !important;
+}
+[data-theme="light"] #flags-drawer pre,
+[data-theme="light"] #theme-drawer input[type="color"] {
+  background: #FAF3E4;
+}
+[data-theme="light"] .btn-ghost {
+  background: rgba(44, 26, 14, 0.08) !important;
+  border-color: rgba(44, 26, 14, 0.25) !important;
+  color: #2C1A0E !important;
+}
+[data-theme="light"] .btn-ghost:hover {
+  background: rgba(201, 114, 4, 0.15) !important;
+  border-color: #C97204 !important;
+  color: #C97204 !important;
+}
+[data-theme="light"] table.judge-table th {
+  background: #EADBCC !important;
+  color: #2C1A0E !important;
+}
+[data-theme="light"] .act-timeline::before {
+  background: linear-gradient(180deg, #C97204, rgba(201, 114, 4, 0.15)) !important;
+}
+[data-theme="light"] .toggle {
+  background: #d4c2a8 !important;
+}
+[data-theme="light"] .toggle::after {
+  background: #FAF3E4 !important;
+}
+[data-theme="light"] .toggle[aria-checked="true"] {
+  background: #C97204 !important;
+}
+[data-theme="light"] .toggle[aria-checked="true"]::after {
+  background: #FFFFFF !important;
+}

@@ -1,0 +1,66 @@
+{
+  "id": "anarkali",
+  "title": "Anarkali Nritya",
+  "subtitle": "The Court Dancer's Pirouette",
+  "puppetType": "dancer",
+  "durationSeconds": 195,
+  "beats": [
+    {
+      "beat": 1,
+      "time": "0:00 — 0:25",
+      "name": "Awakening of the Ghungroo",
+      "instructionIcon": "🏮",
+      "prompt": "Gently lift your hand to bring Anarkali to life above the stage floor.",
+      "targetAction": "lift",
+      "targetPose": { "x": 0, "y": 1.62, "roll": 0 },
+      "soundCue": "greet"
+    },
+    {
+      "beat": 2,
+      "time": "0:25 — 0:55",
+      "name": "The Royal Salaam",
+      "instructionIcon": "🤝",
+      "prompt": "Tilt your wrist forward to let her perform a deep courtly bow.",
+      "targetAction": "bow",
+      "targetPose": { "x": 0, "y": 1.48, "roll": 0.35 },
+      "soundCue": "bow"
+    },
+    {
+      "beat": 3,
+      "time": "0:55 — 1:35",
+      "name": "The Dholak Rhythm",
+      "instructionIcon": "🎶",
+      "prompt": "Wiggle your fingers to the dholak beat to make her pleated skirt flare in dance.",
+      "targetAction": "dance",
+      "targetPose": { "x": 0.15, "y": 1.60, "roll": -0.2 },
+      "soundCue": "nod"
+    },
+    {
+      "beat": 4,
+      "time": "1:35 — 2:30",
+      "name": "Chakkar (The Golden Spin)",
+      "instructionIcon": "🌸",
+      "prompt": "Twirl your hand in a fast circle to execute a rapid spin; shower of rose petals falls.",
+      "targetAction": "spin",
+      "targetPose": { "x": 0, "y": 1.65, "roll": 0.65 },
+      "soundCue": "spin"
+    },
+    {
+      "beat": 5,
+      "time": "2:30 — 3:15",
+      "name": "Curtain Call of Honour",
+      "instructionIcon": "✨",
+      "prompt": "Raise both hands high to greet the cheering audience as the velvet curtain falls.",
+      "targetAction": "curtainCall",
+      "targetPose": { "x": 0, "y": 1.75, "roll": 0 },
+      "soundCue": "cheer"
+    }
+  ],
+  "meetTheMaker": {
+    "title": "Meet the Maker: The Bhat Puppeteer",
+    "icon": "🪵",
+    "artisanCraft": "Carved Rohida Wood & Gota-Patti Stitching",
+    "description": "Anarkali’s head was shaped with simple chisels from desert Rohida wood, then smoothed and painted with large almond eyes lined with kajal. Her multi-tiered rani-pink skirt has no legs underneath; the illusion of dance is born entirely from the momentum of pleated fabric weighted with pure gold gota ribbon at the hem.",
+    "communityDedication": "Preserved by generations of the Bhat puppeteer families of Rajasthan."
+  }
+}

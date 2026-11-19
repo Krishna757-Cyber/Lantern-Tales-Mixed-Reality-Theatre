@@ -1,0 +1,90 @@
+{
+  "acts": [
+    {
+      "id": "act-1",
+      "title": "Act I • The Crow, The Vessel, and The Light",
+      "tagline": "A wordless fable of perseverance, illumination, and friendship",
+      "origin": "Aesop Perry Index 198 & Panchatantra with Wayang Kulit performance traditions",
+      "durationSeconds": 90,
+      "beats": [
+        {
+          "index": 1,
+          "name": "The Kindling",
+          "pose": 1,
+          "poseName": "Kindle",
+          "gesture": "Open palm, fingers splayed wide",
+          "startSeconds": 0,
+          "endSeconds": 12,
+          "narrative": "An open palm wakes the brass lantern. Warm amber light floods the parchment wall, casting the initial sacred circle.",
+          "audioCue": "brass-bell-chime",
+          "culturalNote": "Inspired by the Dalang lighting the Blencong coconut-oil lamp in Wayang Kulit."
+        },
+        {
+          "index": 2,
+          "name": "The Origami Beak",
+          "pose": 2,
+          "poseName": "Beak",
+          "gesture": "Thumb and index pinch",
+          "startSeconds": 12,
+          "endSeconds": 28,
+          "narrative": "A pointed shadow beak opens on the parchment. Hold steady for two seconds as paper perforations shiver into life.",
+          "audioCue": "paper-crease-flutter",
+          "culturalNote": "Rooted in Karasu-dawn motifs and public-domain folklore."
+        },
+        {
+          "index": 3,
+          "name": "Flight Beyond the Wall",
+          "pose": 5,
+          "poseName": "Wings",
+          "gesture": "Index and middle spread; vertical flap",
+          "startSeconds": 28,
+          "endSeconds": 42,
+          "narrative": "The crow breaks away from the hand silhouette, bends around the real physical room corner, and soars into the sky.",
+          "audioCue": "feather-wind-gust",
+          "culturalNote": "Hero mixed-reality moment: virtual shadow geometry conforming to real room mesh."
+        },
+        {
+          "index": 4,
+          "name": "The Thirst & The Rising Water",
+          "pose": 3,
+          "poseName": "Pebble",
+          "gesture": "Clenched fist",
+          "startSeconds": 42,
+          "endSeconds": 65,
+          "narrative": "Dropping glowing river pebbles into the dry pitcher. Each stone rings with a resonant ceramic ping, raising the tide.",
+          "audioCue": "stone-drop-ripple",
+          "culturalNote": "Classic Aesopian lesson: persistence and tool usage over brute force."
+        },
+        {
+          "index": 5,
+          "name": "The Duet Across the Wall",
+          "pose": 7,
+          "poseName": "Meet",
+          "gesture": "Two hands meet or summon guest shadow",
+          "startSeconds": 65,
+          "endSeconds": 90,
+          "narrative": "A stranger's shadow hand reaches across your real wall. Palms meet in passthrough, igniting the shelf of lanterns.",
+          "audioCue": "gamelan-crescendo",
+          "culturalNote": "Shared presence in mixed reality without controllers or voice chat."
+        }
+      ]
+    }
+  ],
+  "traditions": [
+    {
+      "name": "Wayang Kulit",
+      "region": "Java, Bali & Southeast Asia",
+      "description": "Master Dalang puppeteers animate intricate leather puppets behind a cotton screen (Kelir) illuminated by an overhead oil flame."
+    },
+    {
+      "name": "Chhaya Natak",
+      "region": "Ancient India",
+      "description": "Sanskrit shadow drama dating back to the Natya Shastra, exploring philosophical epics through illuminated silhouettes."
+    },
+    {
+      "name": "Aesopica",
+      "region": "Ancient Greece & Mediterranean",
+      "description": "Oral animal parables passed down and recorded across millennia, emphasizing wisdom, humility, and ingenuity."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "ghostA": {
+    "name": "The Wayfarer (Ghost A)",
+    "description": "Pre-recorded shadow companion for solo performers",
+    "frames": [
+      { "t": 0, "x": 0.25, "y": 0.55, "pose": 1, "confidence": 0.98 },
+      { "t": 5, "x": 0.32, "y": 0.52, "pose": 1, "confidence": 0.96 },
+      { "t": 12, "x": 0.40, "y": 0.48, "pose": 2, "confidence": 0.95 },
+      { "t": 20, "x": 0.45, "y": 0.42, "pose": 2, "confidence": 0.97 },
+      { "t": 35, "x": 0.50, "y": 0.38, "pose": 5, "confidence": 0.94 },
+      { "t": 50, "x": 0.55, "y": 0.60, "pose": 3, "confidence": 0.99 },
+      { "t": 68, "x": 0.62, "y": 0.50, "pose": 7, "confidence": 0.98 },
+      { "t": 85, "x": 0.70, "y": 0.45, "pose": 8, "confidence": 0.97 }
+    ]
+  },
+  "ghostB": {
+    "name": "The Stranger (Ghost B)",
+    "description": "Enters from opposite stage edge for the Duet hero moment",
+    "frames": [
+      { "t": 60, "x": 0.95, "y": 0.52, "pose": 1, "confidence": 0.92 },
+      { "t": 65, "x": 0.85, "y": 0.51, "pose": 7, "confidence": 0.96 },
+      { "t": 72, "x": 0.68, "y": 0.50, "pose": 7, "confidence": 0.99 },
+      { "t": 82, "x": 0.64, "y": 0.48, "pose": 8, "confidence": 0.98 }
+    ]
+  }
+}
