@@ -162,9 +162,9 @@ export class RangManchHall {
     arch.position.set(0, stageHeight + 2.2 + 0.22, -2.2 + stageDepth / 2);
     g.add(arch);
 
-    // Painted Cloth Backdrop (Parchment / Night Cloth)
+    // Painted Cloth Backdrop (Parchment / Night Cloth - Warm royal courtyard tone)
     const backdropGeo = new THREE.PlaneGeometry(stageWidth - 0.2, 2.1);
-    const backdropMat = new THREE.MeshStandardMaterial({ color: 0x241B28, roughness: 0.95 });
+    const backdropMat = new THREE.MeshStandardMaterial({ color: 0x3E2632, roughness: 0.88 });
     const backdrop = new THREE.Mesh(backdropGeo, backdropMat);
     backdrop.position.set(0, stageHeight + 1.1, -2.2 - stageDepth / 2 + 0.08);
     backdrop.receiveShadow = true;
@@ -185,10 +185,15 @@ export class RangManchHall {
     this.audience.group.position.set(0, 0.2, 0.6);
     g.add(this.audience.group);
 
-    // 10. Stage Follow-Spotlight (Warm focused dramatic shadow light)
-    const spot = new THREE.SpotLight(0xFFAA44, 1.4, 9.0, Math.PI / 4, 0.55, 1.2);
-    spot.position.set(0, 4.0, 0.5);
-    spot.target = backdrop;
+    // Dedicated Stage Puppet Focal Target (illuminates puppet faces at eye-level)
+    const stagePuppetTarget = new THREE.Object3D();
+    stagePuppetTarget.position.set(0, 1.18, -2.1);
+    g.add(stagePuppetTarget);
+
+    // 10. Stage Follow-Spotlight (Warm focused golden theatrical illumination)
+    const spot = new THREE.SpotLight(0xFFE2B8, 1.85, 11.0, Math.PI / 3.6, 0.45, 1.1);
+    spot.position.set(0, 4.2, 0.8);
+    spot.target = stagePuppetTarget;
     spot.castShadow = true;
     spot.shadow.mapSize.width = 1024;
     spot.shadow.mapSize.height = 1024;
@@ -196,11 +201,23 @@ export class RangManchHall {
     g.add(spot);
     this.stageSpotlight = spot;
 
-    // Ambient Twilight Courtyard Light & Warm Desert Fill (Rich & Atmospheric)
-    const ambient = new THREE.AmbientLight(0x2E1C24, 0.5); // Deep twilight courtyard ambiance
+    // Dedicated Frontal Puppet Face Key Light: Illuminates carved wood faces, painted eyes, and turbans
+    const faceKeyLight = new THREE.DirectionalLight(0xFFF3E0, 1.35);
+    faceKeyLight.position.set(0, 2.4, 1.4);
+    faceKeyLight.target = stagePuppetTarget;
+    g.add(faceKeyLight);
+
+    // Warm Theatrical Facial Fill Light from stage right: Softens chin/cheek shadows
+    const faceFillLight = new THREE.DirectionalLight(0xFFDCA8, 0.70);
+    faceFillLight.position.set(-1.8, 1.9, 1.2);
+    faceFillLight.target = stagePuppetTarget;
+    g.add(faceFillLight);
+
+    // Ambient Twilight Courtyard Ambiance (Rich, warm, pleasing to the eyes)
+    const ambient = new THREE.AmbientLight(0x563840, 0.85); // Warm twilight ambiance
     g.add(ambient);
 
-    const hemiLight = new THREE.HemisphereLight(0xE39A48, 0x120C18, 0.4); // Golden desert twilight sky + dark shadow ground
+    const hemiLight = new THREE.HemisphereLight(0xFFE4C4, 0x362028, 0.75); // Warm golden sky + soft shadow
     g.add(hemiLight);
 
     // 11. Puppet Mount Node (Stage center floor)

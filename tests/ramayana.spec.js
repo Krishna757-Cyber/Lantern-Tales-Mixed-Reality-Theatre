@@ -64,4 +64,24 @@ for (const charId of testCharacters) {
 }
 console.log('  ✓ Verified Ramayana Kathputli character family and pose kinematics');
 
+// 5. Validate Multilingual Database (7 Languages across 38 Scenes)
+import { MULTILINGUAL_SCENES, SUPPORTED_LANGUAGES, getSceneNarration } from '../src/story/ramayana-multilingual.js';
+assert.strictEqual(SUPPORTED_LANGUAGES.length, 7, 'Must support 7 languages');
+const requiredLangCodes = ['hi', 'en', 'sa', 'gu', 'bn', 'ta', 'te'];
+requiredLangCodes.forEach(code => {
+  assert(SUPPORTED_LANGUAGES.some(l => l.code === code), `Missing required language code: ${code}`);
+});
+
+for (const scene of RAMAYANA_SCENES) {
+  assert(MULTILINGUAL_SCENES[scene.id], `Missing multilingual entry for scene ${scene.id}`);
+  const m = MULTILINGUAL_SCENES[scene.id];
+  for (const code of requiredLangCodes) {
+    assert(m[code] && typeof m[code] === 'string' && m[code].length > 10,
+      `Scene ${scene.id} missing narration text for language ${code}`);
+    const queried = getSceneNarration(scene.id, code);
+    assert.strictEqual(queried, m[code], `getSceneNarration failed for ${scene.id} in ${code}`);
+  }
+}
+console.log('  ✓ Verified 7-language multilingual database (Hindi, English, Sanskrit, Gujarati, Bengali, Tamil, Telugu)');
+
 console.log('✅ Ramayana Katha feature test suite passed with 100% compliance!');

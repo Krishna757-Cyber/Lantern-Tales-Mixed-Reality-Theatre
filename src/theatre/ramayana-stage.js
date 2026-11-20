@@ -87,24 +87,33 @@ export class RamayanaStageManager {
     const THREE = this.THREE;
     const g = this.backdropGroup;
 
-    // Atmospheric warm Rajasthani Haveli evening palette (rich & non-overexposed)
-    const stoneMat = new THREE.MeshStandardMaterial({ color: 0x482E22, roughness: 0.92 });
-    const pillarMat = new THREE.MeshStandardMaterial({ color: 0x6E442D, roughness: 0.86 });
-    const jaliMat = new THREE.MeshStandardMaterial({ color: 0x18121C, roughness: 0.95 });
-    const goldMat = new THREE.MeshStandardMaterial({ color: 0xC69224, metalness: 0.72, roughness: 0.35 });
-    const redSilkMat = new THREE.MeshStandardMaterial({ color: 0x6E121E, roughness: 0.78 });
+    // Atmospheric warm Rajasthani Haveli evening palette (rich Jaisalmer sandstone & gold)
+    const stoneMat = new THREE.MeshStandardMaterial({ color: 0x7E523A, roughness: 0.82 });
+    const pillarMat = new THREE.MeshStandardMaterial({ color: 0x8C5236, roughness: 0.80 });
+    const jaliMat = new THREE.MeshStandardMaterial({ color: 0x3E262C, roughness: 0.88 });
+    const goldMat = new THREE.MeshStandardMaterial({ color: 0xE6B83B, metalness: 0.80, roughness: 0.28 });
+    const redSilkMat = new THREE.MeshStandardMaterial({ color: 0x8E1B2C, roughness: 0.75 });
 
-    // Background wall with rich dark sandstone
+    // Background wall with rich warm sandstone
     const wallGeo = new THREE.BoxGeometry(7.0, 3.8, 0.1);
     const wall = new THREE.Mesh(wallGeo, stoneMat);
     wall.position.set(0, 1.8, -1.9);
     g.add(wall);
 
-    // Deep atmospheric jali window in the center behind the puppets for high-contrast puppet silhouette
+    // Deep atmospheric jali window in the center behind the puppets with warm golden frame
     const centerJaliGeo = new THREE.BoxGeometry(3.6, 2.6, 0.02);
     const centerJali = new THREE.Mesh(centerJaliGeo, jaliMat);
     centerJali.position.set(0, 1.6, -1.84);
     g.add(centerJali);
+
+    // Gold ornamental frame around central Jali
+    const jaliFrameGeo = new THREE.BoxGeometry(3.64, 0.05, 0.03);
+    const topFrame = new THREE.Mesh(jaliFrameGeo, goldMat);
+    topFrame.position.set(0, 2.9, -1.83);
+    g.add(topFrame);
+    const bottomFrame = new THREE.Mesh(jaliFrameGeo, goldMat);
+    bottomFrame.position.set(0, 0.32, -1.83);
+    g.add(bottomFrame);
 
     // Flanking Royal Sandstone Pillars
     for (let x of [-2.4, 2.4]) {

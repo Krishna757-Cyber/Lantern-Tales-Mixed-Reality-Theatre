@@ -6,6 +6,7 @@
 ================================================================ */
 
 import { RAMAYANA_KANDS, RAMAYANA_SCENES } from '../story/ramayanaScript.js';
+import { MULTILINGUAL_SCENES, SUPPORTED_LANGUAGES, getSceneNarration } from '../story/ramayana-multilingual.js';
 import { createRamayanaPuppet } from '../kathputli/puppets/ramayana-puppets.js';
 import { RamayanaStageManager } from './ramayana-stage.js';
 import { RamayanaAudioManager } from './ramayana-audio.js';
@@ -26,7 +27,8 @@ export class RamayanaKathaPlayer {
     this.currentIndex = 0;
     this.isPlaying = false;
     this.speed = 1.0;
-    this.language = 'both'; // 'hi', 'en', 'both'
+    this.language = 'hi'; // 'hi', 'en', 'sa', 'gu', 'bn', 'ta', 'te'
+    this.voiceGender = 'female'; // 'female' (Melodious Devi) | 'male' (Resonant Sutradhar)
     this.showCaptions = true;
     this.sceneTimer = null;
     this.sceneStartTime = 0;
@@ -129,9 +131,21 @@ export class RamayanaKathaPlayer {
             <option value="1.25">1.25x</option>
           </select>
 
-          <!-- Language -->
-          <button id="ramayana-btn-lang" class="btn-ghost px-2.5 py-1 rounded-lg border border-parchment/20 text-[11px] font-mono" title="Toggle Language">
-            🌐 <span id="ramayana-lang-label">हिन्दी + Eng</span>
+          <!-- Language Select (7 Languages) -->
+          <select id="ramayana-lang-select" class="bg-black/70 border border-parchment/20 rounded-lg px-2.5 py-1 text-[11px] font-mono text-amber focus:outline-none cursor-pointer hover:border-amber" title="Choose Katha Language">
+            <option value="hi" selected>🇮🇳 हिन्दी (Hindi)</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="sa">🕉️ संस्कृतम् (Sanskrit)</option>
+            <option value="gu">🦁 ગુજરાતી (Gujarati)</option>
+            <option value="bn">🌸 বাংলা (Bengali)</option>
+            <option value="ta">🛕 தமிழ் (Tamil)</option>
+            <option value="te">🪷 తెలుగు (Telugu)</option>
+          </select>
+
+          <!-- Voice Gender Toggle (Female Devi / Male Sutradhar) -->
+          <button id="ramayana-btn-gender" class="btn-ghost px-2.5 py-1 rounded-lg border border-parchment/20 text-[11px] font-mono text-amber hover:border-amber flex items-center gap-1.5" title="Toggle Narrator: Devi (Female) / Sutradhar (Male)">
+            <span id="ramayana-gender-icon">👩</span>
+            <span id="ramayana-gender-label">Devi (Female)</span>
           </button>
 
           <!-- Voice Narration -->
@@ -210,16 +224,45 @@ export class RamayanaKathaPlayer {
       }
     });
 
-    // Language toggle
-    document.getElementById('ramayana-btn-lang')?.addEventListener('click', () => {
-      const modes = ['both', 'hi', 'en'];
-      const nextIdx = (modes.indexOf(this.language) + 1) % modes.length;
-      this.language = modes[nextIdx];
-      const labels = { both: 'हिन्दी + Eng', hi: 'केवल हिन्दी', en: 'English Only' };
-      const lbl = document.getElementById('ramayana-lang-label');
-      if (lbl) lbl.textContent = labels[this.language];
-      this.toast(`🌐 Subtitles: ${labels[this.language]}`);
+    // Language select (7 Languages)
+    document.getElementById('ramayana-lang-select')?.addEventListener('change', (e) => {
+      this.language = e.target.value;
+      this.audioManager.setLanguage(this.language);
+      const optText = e.target.selectedOptions?.[0]?.textContent || this.language;
+      this.toast(`🌐 Katha Language: ${optText}`);
       this.updateSubtitles();
+      if (this.isPlaying) {
+        const sceneData = RAMAYANA_SCENES[this.currentIndex];
+        if (sceneData) {
+          const speechObj = MULTILINGUAL_SCENES[sceneData.id] || { hi: sceneData.narrationHi, en: sceneData.narrationEn };
+          this.audioManager.speak(speechObj, this.language);
+        }
+      }
+    });
+
+    // Voice Gender toggle (Female Devi / Male Sutradhar)
+    document.getElementById('ramayana-btn-gender')?.addEventListener('click', () => {
+      this.voiceGender = (this.voiceGender === 'female') ? 'male' : 'female';
+      this.audioManager.setVoiceGender(this.voiceGender);
+      const iconEl = document.getElementById('ramayana-gender-icon');
+      const labelEl = document.getElementById('ramayana-gender-label');
+      if (iconEl && labelEl) {
+        if (this.voiceGender === 'female') {
+          iconEl.textContent = '👩';
+          labelEl.textContent = 'Devi (Female)';
+        } else {
+          iconEl.textContent = '👨';
+          labelEl.textContent = 'Sutradhar (Male)';
+        }
+      }
+      this.toast(`🎙️ Voice: ${this.voiceGender === 'female' ? '👩 Devi (Melodious Female)' : '👨 Sutradhar (Resonant Male)'}`);
+      if (this.isPlaying) {
+        const sceneData = RAMAYANA_SCENES[this.currentIndex];
+        if (sceneData) {
+          const speechObj = MULTILINGUAL_SCENES[sceneData.id] || { hi: sceneData.narrationHi, en: sceneData.narrationEn };
+          this.audioManager.speak(speechObj, this.language);
+        }
+      }
     });
 
     // Voice narration toggle
@@ -372,13 +415,13 @@ export class RamayanaKathaPlayer {
     this.updateActiveActCard(sceneData);
     this.updateUIProgress();
 
-    // 5. Speak Narration (bilingual object with intelligent TTS voice matching)
-    const narrObj = {
+    // 5. Speak Narration (multilingual 7-language object with intelligent TTS voice & gender matching)
+    const speechObj = MULTILINGUAL_SCENES[sceneData.id] || {
       hi: sceneData.narrationHi,
       en: sceneData.narrationEn
     };
 
-    this.audioManager.speak(narrObj, this.language, false, () => {
+    this.audioManager.speak(speechObj, this.language, false, () => {
       // If puppet dialogue exists, speak with higher Kathputli Boli pitch
       if (sceneData.dialogue && sceneData.dialogue.length > 0) {
         const dlg = sceneData.dialogue[0];
@@ -455,13 +498,16 @@ export class RamayanaKathaPlayer {
     const hiEl = document.getElementById('ramayana-sub-hi');
     const enEl = document.getElementById('ramayana-sub-en');
 
+    const primaryText = getSceneNarration(sceneData.id, this.language) || sceneData.narrationHi;
+    const secondaryText = (this.language === 'en') ? sceneData.narrationHi : sceneData.narrationEn;
+
     if (hiEl) {
-      hiEl.style.display = (this.language === 'both' || this.language === 'hi') ? 'block' : 'none';
-      hiEl.textContent = sceneData.narrationHi;
+      hiEl.style.display = 'block';
+      hiEl.textContent = primaryText;
     }
     if (enEl) {
-      enEl.style.display = (this.language === 'both' || this.language === 'en') ? 'block' : 'none';
-      enEl.textContent = sceneData.narrationEn;
+      enEl.style.display = 'block';
+      enEl.textContent = secondaryText;
     }
   }
 
