@@ -33,6 +33,17 @@ export function setView(viewName, onStageResize = null) {
 
   if (viewName === 'play' && typeof onStageResize === 'function') {
     requestAnimationFrame(onStageResize);
+  } else if (viewName === 'theatre') {
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new CustomEvent('viewchange', { detail: { view: 'theatre' } }));
+      window.dispatchEvent(new Event('resize'));
+    });
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 60);
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 200);
   } else if (viewName === 'home') {
     requestAnimationFrame(() => {
       window.dispatchEvent(new CustomEvent('viewchange', { detail: { view: 'home' } }));

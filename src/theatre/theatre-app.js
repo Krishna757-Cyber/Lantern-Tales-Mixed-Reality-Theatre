@@ -264,13 +264,18 @@ export function initTheatreView(toastFn = null) {
       voice.playSqueak('spin', 0.3);
     });
 
-    // Resize handler
+    // Resize handler with robust fallback for hidden containers
     function onResize() {
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h, false);
+      const rect = container.getBoundingClientRect();
+      const w = rect.width || container.clientWidth || 800;
+      const h = rect.height || container.clientHeight || Math.round(w * 0.58) || 450;
+      if (w > 20 && h > 20) {
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+        renderer.setSize(w, h, false);
+        isVisible = true;
+      }
     }
     window.addEventListener('resize', onResize);
     onResize();
@@ -278,13 +283,18 @@ export function initTheatreView(toastFn = null) {
     // Render loop
     const clock = new THREE.Clock();
     let isVisible = true;
-    new IntersectionObserver((entries) => {
-      isVisible = entries[0].isIntersecting;
-    }, { threshold: 0.1 }).observe(container);
+    try {
+      new IntersectionObserver((entries) => {
+        if (entries && entries[0]) {
+          isVisible = entries[0].isIntersecting;
+        }
+      }, { threshold: 0.05 }).observe(container);
+    } catch (e) {}
 
     function animate() {
       requestAnimationFrame(animate);
-      if (!isVisible) return;
+      const isTheatreActive = document.getElementById('view-theatre')?.classList.contains('active');
+      if (!isVisible && !isTheatreActive) return;
       const dt = clock.getDelta();
       const elapsed = clock.elapsedTime;
 
@@ -304,9 +314,19 @@ export function initTheatreView(toastFn = null) {
     animate();
     hall.curtain.open();
 
-    // Route change cleanup
+    // Route change cleanup & resize activation
     window.addEventListener('viewchange', (e) => {
-      if (e.detail?.view !== 'theatre') {
+      if (e.detail?.view === 'theatre') {
+        isVisible = true;
+        onResize();
+        requestAnimationFrame(() => {
+          onResize();
+          renderer.render(scene, camera);
+        });
+        setTimeout(onResize, 50);
+        setTimeout(onResize, 150);
+        setTimeout(onResize, 350);
+      } else {
         if (ramayanaPlayer && !ramayanaPlayer.isDisposed) {
           ramayanaPlayer.pause();
           ramayanaPlayer.audioManager.stopAll();
