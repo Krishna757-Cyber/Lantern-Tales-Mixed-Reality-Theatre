@@ -62,12 +62,12 @@ export class RamayanaAudioManager {
     // Helper to test if voice name implies female or male
     const isFemaleVoice = (v) => {
       const n = (v.name + ' ' + (v.voiceURI || '')).toLowerCase();
-      return /female|woman|girl|swara|neerja|dhwani|tanishaa|pallavi|shruti|kalpana|zira|priya|heera|aditi|kavya|samantha|victoria|karen|tessa|sangeeta|sita|anjali|deepa/i.test(n);
+      return /female|woman|girl|swara|neerja|dhwani|tanishaa|pallavi|shruti|kalpana|zira|priya|heera|aditi|kavya|samantha|victoria|karen|tessa|sangeeta|sita|anjali|deepa|hazel|catherine|linda|stephanie|helena/i.test(n);
     };
 
     const isMaleVoice = (v) => {
       const n = (v.name + ' ' + (v.voiceURI || '')).toLowerCase();
-      return /male|man|boy|madhur|prabhat|niranjan|bashkar|valluvar|mohan|hemant|david|ravi|mark|george|daniel|rishi|kumar|ajay|suresh/i.test(n);
+      return /male|man|boy|madhur|prabhat|niranjan|bashkar|valluvar|mohan|hemant|david|ravi|mark|george|daniel|rishi|kumar|ajay|suresh|james|richard|alex|fred/i.test(n);
     };
 
     const isNatural = (v) => {
@@ -88,15 +88,15 @@ export class RamayanaAudioManager {
         let scoreB = 0;
 
         if (targetGender === 'female') {
-          if (isFemaleVoice(a)) scoreA += 10;
-          if (isMaleVoice(a)) scoreA -= 6;
-          if (isFemaleVoice(b)) scoreB += 10;
-          if (isMaleVoice(b)) scoreB -= 6;
+          if (isFemaleVoice(a)) scoreA += 15;
+          if (isMaleVoice(a)) scoreA -= 10;
+          if (isFemaleVoice(b)) scoreB += 15;
+          if (isMaleVoice(b)) scoreB -= 10;
         } else {
-          if (isMaleVoice(a)) scoreA += 10;
-          if (isFemaleVoice(a)) scoreA -= 6;
-          if (isMaleVoice(b)) scoreB += 10;
-          if (isFemaleVoice(b)) scoreB -= 6;
+          if (isMaleVoice(a)) scoreA += 15;
+          if (isFemaleVoice(a)) scoreA -= 10;
+          if (isMaleVoice(b)) scoreB += 15;
+          if (isFemaleVoice(b)) scoreB -= 10;
         }
 
         if (isNatural(a)) scoreA += 5;
@@ -113,14 +113,28 @@ export class RamayanaAudioManager {
       return matches[0];
     };
 
+    // Global default gender voices across all available system voices
+    const allFemaleVoices = voices.filter(v => isFemaleVoice(v));
+    const allMaleVoices = voices.filter(v => isMaleVoice(v));
+
+    const defaultFemale = allFemaleVoices.find(v => isNatural(v)) || allFemaleVoices[0] || voices[0];
+    const defaultMale = allMaleVoices.find(v => isNatural(v)) || allMaleVoices[0] || voices.find(v => v !== defaultFemale) || voices[0];
+
+    // Language-specific voices
+    const hiFemale = getBestVoice(['hi', 'hi-in'], 'female');
+    const hiMale = getBestVoice(['hi', 'hi-in'], 'male');
+
+    const enFemale = getBestVoice(['en-in', 'en-gb', 'en-us', 'en'], 'female') || defaultFemale;
+    const enMale = getBestVoice(['en-in', 'en-gb', 'en-us', 'en'], 'male') || defaultMale;
+
     this.voiceMap = {
       hi: {
-        female: getBestVoice(['hi', 'hi-in'], 'female'),
-        male: getBestVoice(['hi', 'hi-in'], 'male')
+        female: hiFemale,
+        male: hiMale
       },
       en: {
-        female: getBestVoice(['en-in', 'en-gb', 'en-us', 'en'], 'female'),
-        male: getBestVoice(['en-in', 'en-gb', 'en-us', 'en'], 'male')
+        female: enFemale,
+        male: enMale
       },
       gu: {
         female: getBestVoice(['gu', 'gu-in'], 'female'),
@@ -139,14 +153,16 @@ export class RamayanaAudioManager {
         male: getBestVoice(['te', 'te-in'], 'male')
       },
       sa: {
-        female: getBestVoice(['sa', 'sa-in', 'hi', 'hi-in'], 'female'),
-        male: getBestVoice(['sa', 'sa-in', 'hi', 'hi-in'], 'male')
+        female: getBestVoice(['sa', 'sa-in'], 'female') || hiFemale,
+        male: getBestVoice(['sa', 'sa-in'], 'male') || hiMale
       }
     };
 
-    // Universal fallbacks
-    this.hindiVoice = this.voiceMap.hi.female || this.voiceMap.hi.male || voices.find(v => (v.lang || '').startsWith('hi'));
-    this.englishVoice = this.voiceMap.en.female || this.voiceMap.en.male || voices.find(v => (v.lang || '').startsWith('en')) || voices[0];
+    this.defaultFemaleVoice = defaultFemale;
+    this.defaultMaleVoice = defaultMale;
+
+    this.hindiVoice = hiFemale || hiMale;
+    this.englishVoice = enFemale || enMale || voices[0];
 
     this.voicesLoaded = true;
   }
@@ -379,58 +395,76 @@ export class RamayanaAudioManager {
       return;
     }
 
-    // Refresh voices if not yet cached or if newly loaded
-    if (!this.voicesLoaded) {
+    // Always re-check voices if not yet cached or if newly loaded
+    if (!this.voicesLoaded || (!this.defaultFemaleVoice && !this.defaultMaleVoice)) {
       this.initVoices();
     }
 
     const selectedLang = lang || this.currentLang || 'hi';
     const targetGender = this.voiceGender || 'female';
 
-    // Map of language code to standard SpeechSynthesis lang tag
-    const langTagMap = {
-      hi: 'hi-IN',
-      en: 'en-IN',
-      gu: 'gu-IN',
-      bn: 'bn-IN',
-      ta: 'ta-IN',
-      te: 'te-IN',
-      sa: 'hi-IN' // Sanskrit chanted with sacred intonation via hi-IN
-    };
-
     let textToSpeak = '';
     let voiceToUse = null;
-    let speakLang = langTagMap[selectedLang] || 'en-US';
+    let speakLang = 'en-US';
+
+    // 1. First look up language-specific voices
+    const langVoices = this.voiceMap ? this.voiceMap[selectedLang] : null;
+    if (langVoices) {
+      voiceToUse = langVoices[targetGender] || langVoices[targetGender === 'female' ? 'male' : 'female'];
+    }
+
+    // 2. If no voice exists for selectedLang, assign default voice matching targetGender
+    if (!voiceToUse) {
+      if (targetGender === 'female') {
+        voiceToUse = this.voiceMap?.en?.female || this.defaultFemaleVoice || this.englishVoice;
+      } else {
+        voiceToUse = this.voiceMap?.en?.male || this.defaultMaleVoice || this.englishVoice;
+      }
+    }
+
+    // 3. Inspect the actual capability of the chosen voice
+    const voiceLang = (voiceToUse?.lang || '').toLowerCase();
+    const voiceName = (voiceToUse?.name || '').toLowerCase();
+    const voiceSupportsHindi = voiceLang.startsWith('hi') || /hindi|swara|madhur|kalpana|hemant/i.test(voiceName);
 
     if (typeof textOrObj === 'object') {
-      // 1. Try to get native text for the requested language
-      textToSpeak = textOrObj[selectedLang] || '';
-
-      // 2. Look for best voice for [selectedLang][targetGender]
-      const langVoices = this.voiceMap[selectedLang];
-      if (langVoices) {
-        voiceToUse = langVoices[targetGender] || langVoices[targetGender === 'female' ? 'male' : 'female'];
-      }
-
-      // 3. Fallback handling if no voice exists on the user's OS for selectedLang
-      if (!voiceToUse) {
-        const fallbackLang = (selectedLang === 'en') ? 'en' : 'hi';
-        const fallbackVoices = this.voiceMap[fallbackLang] || this.voiceMap.en || {};
-        voiceToUse = fallbackVoices[targetGender] || fallbackVoices[targetGender === 'female' ? 'male' : 'female'] || this.hindiVoice || this.englishVoice;
-
-        if (!textToSpeak || (selectedLang !== 'hi' && selectedLang !== 'sa' && selectedLang !== 'en' && !this.voiceMap[selectedLang]?.[targetGender])) {
-          textToSpeak = textOrObj.hi || textOrObj.en || textToSpeak;
-          speakLang = textOrObj.hi ? 'hi-IN' : 'en-US';
+      if (selectedLang === 'hi' || selectedLang === 'sa') {
+        if (voiceSupportsHindi) {
+          // Native Hindi TTS is installed on system -> speak authentic Devanagari!
+          textToSpeak = textOrObj[selectedLang] || textOrObj.hi || '';
+          speakLang = 'hi-IN';
+        } else {
+          // English voice on system (e.g. Brave/Windows with Microsoft Zira or David):
+          // MUST speak English narration so user hears loud, melodious voice instead of silence!
+          textToSpeak = textOrObj.en || textOrObj.hi || '';
+          speakLang = voiceToUse?.lang || 'en-US';
+        }
+      } else if (selectedLang === 'en') {
+        textToSpeak = textOrObj.en || textOrObj.hi || '';
+        speakLang = voiceToUse?.lang || 'en-US';
+      } else {
+        // Regional (gu, bn, ta, te):
+        const regionalVoice = this.voiceMap?.[selectedLang]?.[targetGender];
+        if (regionalVoice) {
+          textToSpeak = textOrObj[selectedLang] || textOrObj.hi || textOrObj.en || '';
+          speakLang = regionalVoice.lang || 'en-US';
+        } else if (voiceSupportsHindi) {
+          textToSpeak = textOrObj.hi || textOrObj.en || '';
+          speakLang = 'hi-IN';
+        } else {
+          textToSpeak = textOrObj.en || textOrObj.hi || '';
+          speakLang = voiceToUse?.lang || 'en-US';
         }
       }
     } else {
       textToSpeak = textOrObj;
-      const langVoices = this.voiceMap[selectedLang];
-      if (langVoices) {
-        voiceToUse = langVoices[targetGender] || langVoices[targetGender === 'female' ? 'male' : 'female'];
-      }
-      if (!voiceToUse) {
-        voiceToUse = (targetGender === 'female' ? this.voiceMap.en?.female : this.voiceMap.en?.male) || this.englishVoice;
+      const hasDevanagari = /[\u0900-\u097F]/.test(textToSpeak);
+      if (hasDevanagari && !voiceSupportsHindi) {
+        speakLang = voiceToUse?.lang || 'en-US';
+      } else if (hasDevanagari) {
+        speakLang = 'hi-IN';
+      } else {
+        speakLang = voiceToUse?.lang || 'en-US';
       }
     }
 
@@ -449,18 +483,18 @@ export class RamayanaAudioManager {
       }
       utterance.lang = speakLang;
 
-      // Pitch & Rate tuning for Melodious, Human-like Voice:
-      // Female (Devi / Katha Vachika): pitch 1.15 (sweet, bright, serene), rate 0.92
-      // Male (Sutradhar): pitch 0.92 (warm, resonant baritone), rate 0.93
-      // Kathputli puppet dialogue: pitch 1.32 (folklore whistle/boli accent)
+      // Melodious Acoustic Pacing:
+      // Female (👩 Devi / Katha Vachika): pitch 1.14 (sweet, bright, serene), rate 0.92
+      // Male (👨 Sutradhar / Katha Vachak): pitch 0.90 (resonant, warm storytelling baritone), rate 0.93
+      // Kathputli puppet dialogue: pitch 1.32
       if (isPuppet) {
         utterance.pitch = 1.32;
         utterance.rate = 0.98;
       } else if (targetGender === 'female') {
-        utterance.pitch = 1.15;
+        utterance.pitch = 1.14;
         utterance.rate = 0.92;
       } else {
-        utterance.pitch = 0.92;
+        utterance.pitch = 0.90;
         utterance.rate = 0.93;
       }
 
@@ -488,7 +522,7 @@ export class RamayanaAudioManager {
         finish();
       };
 
-      // Retain global reference to avoid Chrome/V8 GC cutting off speech mid-sentence
+      // Retain global reference to avoid GC cutting speech off
       window._ltSpeechUtterance = utterance;
       this.currentUtterance = utterance;
 
@@ -502,15 +536,16 @@ export class RamayanaAudioManager {
           clearInterval(window._ltSpeechKeepAlive);
           window._ltSpeechKeepAlive = null;
         }
-      }, 10000);
+      }, 5000);
 
-      // Brief delay to allow speechSynth.cancel() to cleanly flush in Chromium
-      setTimeout(() => {
-        if (this.speechSynth) {
-          if (this.speechSynth.paused) this.speechSynth.resume();
-          this.speechSynth.speak(utterance);
-        }
-      }, 40);
+      // CRITICAL: Call speak directly without setTimeout to preserve direct user gesture activation in Brave/Chrome!
+      if (this.speechSynth.paused) {
+        this.speechSynth.resume();
+      }
+      this.speechSynth.speak(utterance);
+      if (this.speechSynth.paused) {
+        this.speechSynth.resume();
+      }
     } catch (err) {
       console.warn('[RamayanaAudio] Speech synthesis fallback:', err);
       this.duckMusic(false);
