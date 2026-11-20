@@ -87,20 +87,29 @@ export class RamayanaStageManager {
     const THREE = this.THREE;
     const g = this.backdropGroup;
 
-    const stoneMat = new THREE.MeshStandardMaterial({ color: 0xE8C39E, roughness: 0.85 });
-    const goldMat = new THREE.MeshStandardMaterial({ color: 0xFFD700, metalness: 0.8, roughness: 0.25 });
-    const redSilkMat = new THREE.MeshStandardMaterial({ color: 0x991B1B, roughness: 0.7 });
+    // Atmospheric warm Rajasthani Haveli evening palette (rich & non-overexposed)
+    const stoneMat = new THREE.MeshStandardMaterial({ color: 0x482E22, roughness: 0.92 });
+    const pillarMat = new THREE.MeshStandardMaterial({ color: 0x6E442D, roughness: 0.86 });
+    const jaliMat = new THREE.MeshStandardMaterial({ color: 0x18121C, roughness: 0.95 });
+    const goldMat = new THREE.MeshStandardMaterial({ color: 0xC69224, metalness: 0.72, roughness: 0.35 });
+    const redSilkMat = new THREE.MeshStandardMaterial({ color: 0x6E121E, roughness: 0.78 });
 
-    // Background wall with carved jali window cutout
+    // Background wall with rich dark sandstone
     const wallGeo = new THREE.BoxGeometry(7.0, 3.8, 0.1);
     const wall = new THREE.Mesh(wallGeo, stoneMat);
     wall.position.set(0, 1.8, -1.9);
     g.add(wall);
 
+    // Deep atmospheric jali window in the center behind the puppets for high-contrast puppet silhouette
+    const centerJaliGeo = new THREE.BoxGeometry(3.6, 2.6, 0.02);
+    const centerJali = new THREE.Mesh(centerJaliGeo, jaliMat);
+    centerJali.position.set(0, 1.6, -1.84);
+    g.add(centerJali);
+
     // Flanking Royal Sandstone Pillars
     for (let x of [-2.4, 2.4]) {
       const pillarGeo = new THREE.CylinderGeometry(0.14, 0.16, 3.6, 12);
-      const pillar = new THREE.Mesh(pillarGeo, stoneMat);
+      const pillar = new THREE.Mesh(pillarGeo, pillarMat);
       pillar.position.set(x, 1.8, -1.8);
       g.add(pillar);
 

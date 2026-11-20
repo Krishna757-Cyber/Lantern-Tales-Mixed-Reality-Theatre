@@ -32,8 +32,8 @@ export class RangManchHall {
 
     // Palette: Rajasthan sandstone & natural pigments
     const sandstoneMat = new THREE.MeshStandardMaterial({
-      color: 0xDEB887, // Jaisalmer golden sandstone
-      roughness: 0.88,
+      color: 0x7E4C2C, // Rich Jaisalmer deep ochre-red sandstone
+      roughness: 0.86,
       metalness: 0.05
     });
 
@@ -162,9 +162,9 @@ export class RangManchHall {
     arch.position.set(0, stageHeight + 2.2 + 0.22, -2.2 + stageDepth / 2);
     g.add(arch);
 
-    // Painted Cloth Backdrop (Parchment)
+    // Painted Cloth Backdrop (Parchment / Night Cloth)
     const backdropGeo = new THREE.PlaneGeometry(stageWidth - 0.2, 2.1);
-    const backdropMat = new THREE.MeshStandardMaterial({ color: 0xFDF5E6, roughness: 0.95 });
+    const backdropMat = new THREE.MeshStandardMaterial({ color: 0x241B28, roughness: 0.95 });
     const backdrop = new THREE.Mesh(backdropGeo, backdropMat);
     backdrop.position.set(0, stageHeight + 1.1, -2.2 - stageDepth / 2 + 0.08);
     backdrop.receiveShadow = true;
@@ -185,8 +185,8 @@ export class RangManchHall {
     this.audience.group.position.set(0, 0.2, 0.6);
     g.add(this.audience.group);
 
-    // 10. Stage Follow-Spotlight (The single primary shadow-casting light)
-    const spot = new THREE.SpotLight(0xFFAA44, 2.2, 8.0, Math.PI / 4, 0.5, 1.2);
+    // 10. Stage Follow-Spotlight (Warm focused dramatic shadow light)
+    const spot = new THREE.SpotLight(0xFFAA44, 1.4, 9.0, Math.PI / 4, 0.55, 1.2);
     spot.position.set(0, 4.0, 0.5);
     spot.target = backdrop;
     spot.castShadow = true;
@@ -196,17 +196,12 @@ export class RangManchHall {
     g.add(spot);
     this.stageSpotlight = spot;
 
-    // Ambient Twilight Courtyard Light & Warm Desert Fill
-    const ambient = new THREE.AmbientLight(0xFFE8D0, 0.85); // Warm parchment ambient fill
+    // Ambient Twilight Courtyard Light & Warm Desert Fill (Rich & Atmospheric)
+    const ambient = new THREE.AmbientLight(0x2E1C24, 0.5); // Deep twilight courtyard ambiance
     g.add(ambient);
 
-    const hemiLight = new THREE.HemisphereLight(0xFFE0B2, 0x1A1424, 0.75); // Desert sky + dark courtyard floor
+    const hemiLight = new THREE.HemisphereLight(0xE39A48, 0x120C18, 0.4); // Golden desert twilight sky + dark shadow ground
     g.add(hemiLight);
-
-    const stageKeyLight = new THREE.DirectionalLight(0xFFD59E, 0.9);
-    stageKeyLight.position.set(0, 3.8, 2.5);
-    stageKeyLight.target = backdrop;
-    g.add(stageKeyLight);
 
     // 11. Puppet Mount Node (Stage center floor)
     const mount = new THREE.Group();

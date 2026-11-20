@@ -284,6 +284,7 @@ export class RamayanaKathaPlayer {
 
   play() {
     this.isPlaying = true;
+    this.audioManager.resumeAudioAndSpeech();
     const playIcon = document.getElementById('ramayana-play-icon');
     const playText = document.getElementById('ramayana-play-text');
     if (playIcon) playIcon.textContent = '⏸️';
@@ -371,16 +372,20 @@ export class RamayanaKathaPlayer {
     this.updateActiveActCard(sceneData);
     this.updateUIProgress();
 
-    // 5. Speak Narration
-    const speechText = this.language === 'en' ? sceneData.narrationEn : sceneData.narrationHi;
-    const speechLang = this.language === 'en' ? 'en' : 'hi';
+    // 5. Speak Narration (bilingual object with intelligent TTS voice matching)
+    const narrObj = {
+      hi: sceneData.narrationHi,
+      en: sceneData.narrationEn
+    };
 
-    this.audioManager.speak(speechText, speechLang, false, () => {
+    this.audioManager.speak(narrObj, this.language, false, () => {
       // If puppet dialogue exists, speak with higher Kathputli Boli pitch
       if (sceneData.dialogue && sceneData.dialogue.length > 0) {
         const dlg = sceneData.dialogue[0];
-        const dlgText = this.language === 'en' ? dlg.textEn : dlg.textHi;
-        this.audioManager.speak(dlgText, speechLang, true);
+        this.audioManager.speak({
+          hi: dlg.textHi,
+          en: dlg.textEn
+        }, this.language, true);
       }
     });
 

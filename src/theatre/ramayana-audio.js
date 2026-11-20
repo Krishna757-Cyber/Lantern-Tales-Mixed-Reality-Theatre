@@ -43,18 +43,30 @@ export class RamayanaAudioManager {
 
   initVoices() {
     if (!this.speechSynth) return;
-    const voices = this.speechSynth.getVoices();
+    const voices = this.speechSynth.getVoices() || [];
     if (!voices || voices.length === 0) return;
 
     // Look for native Indian voices first
-    this.hindiVoice = voices.find(v => v.lang.startsWith('hi') || v.lang === 'hi-IN') ||
-                      voices.find(v => v.name.includes('Hindi') || v.name.includes('Kalpana') || v.name.includes('Hemant'));
+    this.hindiVoice = voices.find(v => v.lang && (v.lang.toLowerCase().startsWith('hi') || v.lang === 'hi-IN')) ||
+                      voices.find(v => /hindi|kalpana|hemant|swara|madhur/i.test(v.name));
 
-    this.englishVoice = voices.find(v => v.lang === 'en-IN') ||
-                        voices.find(v => v.lang.startsWith('en')) ||
+    this.englishVoice = voices.find(v => v.lang && (v.lang.toLowerCase() === 'en-in' || v.lang.toLowerCase().startsWith('en-in'))) ||
+                        voices.find(v => /ravi|heera|priya|neerja|india/i.test(v.name)) ||
+                        voices.find(v => v.lang && v.lang.toLowerCase().startsWith('en')) ||
                         voices[0];
 
     this.voicesLoaded = true;
+  }
+
+  resumeAudioAndSpeech() {
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      try { this.audioCtx.resume(); } catch (e) {}
+    }
+    if (this.speechSynth) {
+      try {
+        if (this.speechSynth.paused) this.speechSynth.resume();
+      } catch (e) {}
+    }
   }
 
   initAudio() {
@@ -267,45 +279,117 @@ export class RamayanaAudioManager {
     }
   }
 
-  // Speak narration / dialogue via Web Speech API
-  speak(text, lang = 'hi', isPuppet = false, onEnd = null) {
-    if (!this.speechSynth || !this.isVoiceEnabled || !text) {
+  // Speak narration / dialogue via Web Speech API with smart Hindi / English voice fallback
+  speak(textOrObj, lang = 'hi', isPuppet = false, onEnd = null) {
+    if (!this.speechSynth || !this.isVoiceEnabled || !textOrObj) {
+      if (typeof onEnd === 'function') onEnd();
+      return;
+    }
+
+    // Refresh voices if not yet cached or if newly loaded
+    if (!this.voicesLoaded || (!this.hindiVoice && !this.englishVoice)) {
+      this.initVoices();
+    }
+
+    // Determine actual text and voice to speak
+    let textToSpeak = '';
+    let voiceToUse = null;
+    let speakLang = 'en-US';
+
+    if (typeof textOrObj === 'object') {
+      const hiText = textOrObj.hi || '';
+      const enText = textOrObj.en || '';
+
+      if (lang === 'en') {
+        textToSpeak = enText || hiText;
+        voiceToUse = this.englishVoice;
+        speakLang = 'en-US';
+      } else if (this.hindiVoice) {
+        textToSpeak = hiText || enText;
+        voiceToUse = this.hindiVoice;
+        speakLang = 'hi-IN';
+      } else {
+        // Fallback: OS lacks native Hindi TTS voice -> speak clean English narration so narrator is heard!
+        textToSpeak = enText || hiText;
+        voiceToUse = this.englishVoice;
+        speakLang = 'en-US';
+      }
+    } else {
+      textToSpeak = textOrObj;
+      const hasDevanagari = /[\u0900-\u097F]/.test(textToSpeak);
+      if (hasDevanagari && this.hindiVoice) {
+        voiceToUse = this.hindiVoice;
+        speakLang = 'hi-IN';
+      } else {
+        voiceToUse = this.englishVoice;
+        speakLang = 'en-US';
+      }
+    }
+
+    if (!textToSpeak) {
       if (typeof onEnd === 'function') onEnd();
       return;
     }
 
     try {
-      this.speechSynth.cancel(); // Stop any pending speech
+      this.resumeAudioAndSpeech();
+      this.speechSynth.cancel();
 
-      const utterance = new SpeechSynthesisUtterance(text);
-      if (lang === 'hi' && this.hindiVoice) {
-        utterance.voice = this.hindiVoice;
-        utterance.lang = 'hi-IN';
-      } else if (this.englishVoice) {
-        utterance.voice = this.englishVoice;
-        utterance.lang = 'en-IN';
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      if (voiceToUse) {
+        utterance.voice = voiceToUse;
       }
+      utterance.lang = speakLang;
 
-      // Sutradhar = normal pitch (~1.0); puppet dialogue = higher Kathputli Boli pitch (~1.35)
-      utterance.pitch = isPuppet ? 1.38 : 1.02;
+      // Sutradhar = warm storytelling pitch (~1.02); puppet dialogue = higher Kathputli Boli pitch (~1.35)
+      utterance.pitch = isPuppet ? 1.35 : 1.02;
       utterance.rate = 0.95;
 
       utterance.onstart = () => {
         this.duckMusic(true);
       };
 
-      utterance.onend = () => {
+      let finished = false;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
         this.duckMusic(false);
+        if (window._ltSpeechKeepAlive) {
+          clearInterval(window._ltSpeechKeepAlive);
+          window._ltSpeechKeepAlive = null;
+        }
         if (typeof onEnd === 'function') onEnd();
       };
 
-      utterance.onerror = () => {
-        this.duckMusic(false);
-        if (typeof onEnd === 'function') onEnd();
+      utterance.onend = finish;
+      utterance.onerror = (e) => {
+        console.warn('[RamayanaAudio] Speech error event:', e?.error);
+        finish();
       };
 
+      // Retain global reference to avoid Chrome/V8 GC cutting off speech mid-sentence
+      window._ltSpeechUtterance = utterance;
       this.currentUtterance = utterance;
-      this.speechSynth.speak(utterance);
+
+      // Chrome keepalive: prevent long speech from pausing after 15s
+      if (window._ltSpeechKeepAlive) clearInterval(window._ltSpeechKeepAlive);
+      window._ltSpeechKeepAlive = setInterval(() => {
+        if (this.speechSynth && this.speechSynth.speaking) {
+          this.speechSynth.pause();
+          this.speechSynth.resume();
+        } else {
+          clearInterval(window._ltSpeechKeepAlive);
+          window._ltSpeechKeepAlive = null;
+        }
+      }, 10000);
+
+      // Brief delay to allow speechSynth.cancel() to cleanly flush in Chromium
+      setTimeout(() => {
+        if (this.speechSynth) {
+          if (this.speechSynth.paused) this.speechSynth.resume();
+          this.speechSynth.speak(utterance);
+        }
+      }, 40);
     } catch (err) {
       console.warn('[RamayanaAudio] Speech synthesis fallback:', err);
       this.duckMusic(false);
