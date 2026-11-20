@@ -41,12 +41,27 @@ export class PuppetString {
     }
   }
 
-  setAnchor(x, y, z) {
+  setAnchor(x, y, z, resetChain = false) {
     if (this.nodes.length > 0) {
       this.nodes[0].x = x;
       this.nodes[0].y = y;
       this.nodes[0].z = z;
+      this.nodes[0].oldX = x;
+      this.nodes[0].oldY = y;
+      this.nodes[0].oldZ = z;
       this.nodes[0].fixed = true;
+
+      if (resetChain) {
+        const segLen = this.restLength / (this.numNodes - 1);
+        for (let i = 1; i < this.numNodes; i++) {
+          this.nodes[i].x = x;
+          this.nodes[i].y = y - i * segLen;
+          this.nodes[i].z = z;
+          this.nodes[i].oldX = x;
+          this.nodes[i].oldY = y - i * segLen;
+          this.nodes[i].oldZ = z;
+        }
+      }
     }
   }
 

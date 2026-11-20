@@ -59,6 +59,9 @@ export class KathputliRig {
     this.leftArmMesh = null;
     this.rightArmMesh = null;
     this.stringLineMeshes = [];
+
+    // Pre-anchor crossbar to prevent initial drop
+    this.setCrossbar(0, 1.65, 0, 0, 0, 0, true);
   }
 
   buildThreeMesh(THREE) {
@@ -179,7 +182,7 @@ export class KathputliRig {
     return g;
   }
 
-  setCrossbar(x, y, z, roll = 0, pitch = 0, yaw = 0) {
+  setCrossbar(x, y, z, roll = 0, pitch = 0, yaw = 0, resetChain = false) {
     this.crossbar.x = x;
     this.crossbar.y = y;
     this.crossbar.z = z;
@@ -193,13 +196,13 @@ export class KathputliRig {
     const sinR = Math.sin(roll);
 
     // Head center anchor
-    this.headString.setAnchor(x, y, z);
+    this.headString.setAnchor(x, y, z, resetChain);
     // Left hand anchor
-    this.leftHandString.setAnchor(x - halfW * cosR, y - halfW * sinR, z);
+    this.leftHandString.setAnchor(x - halfW * cosR, y - halfW * sinR, z, resetChain);
     // Right hand anchor
-    this.rightHandString.setAnchor(x + halfW * cosR, y + halfW * sinR, z);
+    this.rightHandString.setAnchor(x + halfW * cosR, y + halfW * sinR, z, resetChain);
     // Waist rear anchor
-    this.waistString.setAnchor(x, y, z - 0.05);
+    this.waistString.setAnchor(x, y, z - 0.05, resetChain);
   }
 
   pluckString(stringKey) {
@@ -223,9 +226,10 @@ export class KathputliRig {
     // 2. Drive puppet body from head string endpoint and crossbar height
     const headNode = this.headString.nodes[this.headString.numNodes - 1];
     if (headNode) {
-      // Smooth body translation following the head string
+      // Smooth body translation following the head string (bounded safely above stage floor)
+      const targetY = Math.max(0.65, headNode.y - 0.24);
       this.position.x += (headNode.x - this.position.x) * 0.18;
-      this.position.y += (headNode.y - 0.24 - this.position.y) * 0.25;
+      this.position.y += (targetY - this.position.y) * 0.25;
       this.position.z += (headNode.z - this.position.z) * 0.18;
     }
 

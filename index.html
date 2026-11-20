@@ -391,8 +391,8 @@ tailwind.config = {
 <!-- Main 3D Kathputli Stage Container -->
 <div class="grid lg:grid-cols-[1fr_360px] gap-6 items-start">
   <div>
-    <div id="theatre-stage-wrap" class="relative rounded-3xl overflow-hidden border border-amber/30 shadow-2xl bg-[#0E0C16]" style="min-height: 58vh;">
-      <canvas id="theatre-stage-canvas" class="w-full h-full block" style="min-height: 58vh;" aria-label="Interactive Kathputli Stage"></canvas>
+    <div id="theatre-stage-wrap" class="theatre-canvas-container relative w-full aspect-[16/10] sm:aspect-[16/9] bg-[#0E0C16] rounded-3xl border border-amber/30 shadow-2xl overflow-hidden" tabindex="0" role="region" aria-label="3D Kathputli Stage">
+      <canvas id="theatre-stage-canvas" class="w-full h-full block" aria-label="Interactive Kathputli Stage"></canvas>
 
       <!-- Stage HUD Overlay -->
       <div class="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">

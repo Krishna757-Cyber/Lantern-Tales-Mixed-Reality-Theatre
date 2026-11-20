@@ -196,9 +196,17 @@ export class RangManchHall {
     g.add(spot);
     this.stageSpotlight = spot;
 
-    // Ambient Twilight Courtyard Light
-    const ambient = new THREE.AmbientLight(0x281830, 0.75); // Warm twilight violet
+    // Ambient Twilight Courtyard Light & Warm Desert Fill
+    const ambient = new THREE.AmbientLight(0xFFE8D0, 0.85); // Warm parchment ambient fill
     g.add(ambient);
+
+    const hemiLight = new THREE.HemisphereLight(0xFFE0B2, 0x1A1424, 0.75); // Desert sky + dark courtyard floor
+    g.add(hemiLight);
+
+    const stageKeyLight = new THREE.DirectionalLight(0xFFD59E, 0.9);
+    stageKeyLight.position.set(0, 3.8, 2.5);
+    stageKeyLight.target = backdrop;
+    g.add(stageKeyLight);
 
     // 11. Puppet Mount Node (Stage center floor)
     const mount = new THREE.Group();

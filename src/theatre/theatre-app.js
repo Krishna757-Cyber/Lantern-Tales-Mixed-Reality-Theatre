@@ -28,14 +28,18 @@ export function initTheatreView(toastFn = null) {
   if (!canvas || !container || typeof THREE === 'undefined') return;
 
   try {
+    const initialW = container.clientWidth || 800;
+    const initialH = container.clientHeight || Math.round(initialW * (9 / 16)) || 450;
+    const initialAspect = (initialW > 0 && initialH > 0) ? (initialW / initialH) : (16 / 9);
+
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-    camera.position.set(0, 1.45, 3.8);
-    camera.lookAt(0, 1.15, 0);
+    const camera = new THREE.PerspectiveCamera(45, initialAspect, 0.1, 100);
+    camera.position.set(0, 1.4, 3.8);
+    camera.lookAt(0, 1.1, 0);
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-    renderer.setSize(container.clientWidth, container.clientHeight, false);
+    renderer.setSize(initialW, initialH);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -266,15 +270,15 @@ export function initTheatreView(toastFn = null) {
 
     // Resize handler with robust fallback for hidden containers
     function onResize() {
+      if (!container || !canvas) return;
       const rect = container.getBoundingClientRect();
-      const w = rect.width || container.clientWidth || 800;
-      const h = rect.height || container.clientHeight || Math.round(w * 0.58) || 450;
-      if (w > 20 && h > 20) {
+      const w = Math.round(rect.width) || container.clientWidth || 800;
+      const h = Math.round(rect.height) || container.clientHeight || Math.round(w * (9 / 16)) || 450;
+      if (w > 50 && h > 50) {
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-        renderer.setSize(w, h, false);
-        isVisible = true;
+        renderer.setSize(w, h);
       }
     }
     window.addEventListener('resize', onResize);
@@ -282,19 +286,9 @@ export function initTheatreView(toastFn = null) {
 
     // Render loop
     const clock = new THREE.Clock();
-    let isVisible = true;
-    try {
-      new IntersectionObserver((entries) => {
-        if (entries && entries[0]) {
-          isVisible = entries[0].isIntersecting;
-        }
-      }, { threshold: 0.05 }).observe(container);
-    } catch (e) {}
 
     function animate() {
       requestAnimationFrame(animate);
-      const isTheatreActive = document.getElementById('view-theatre')?.classList.contains('active');
-      if (!isVisible && !isTheatreActive) return;
       const dt = clock.getDelta();
       const elapsed = clock.elapsedTime;
 
@@ -317,7 +311,6 @@ export function initTheatreView(toastFn = null) {
     // Route change cleanup & resize activation
     window.addEventListener('viewchange', (e) => {
       if (e.detail?.view === 'theatre') {
-        isVisible = true;
         onResize();
         requestAnimationFrame(() => {
           onResize();

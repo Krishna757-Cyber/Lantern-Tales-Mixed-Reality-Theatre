@@ -177,6 +177,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   initFlagsDrawer(toast);
   initRoomToggles();
   updateRoomBadges();
+
+  // 3D Rang Manch Virtual Theatre initialized before navigation so routing listeners are active
+  initTheatreView(toast);
+
   initNavigation(sizeStage);
   initStage();
 
@@ -379,8 +383,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     initHeroScene(heroCanvas, heroContainer, toast);
   }
 
-  // 3D Rang Manch Virtual Theatre
-  initTheatreView(toast);
 
   // Connect to Multiplayer WebSocket
   connectToRoom('STAGE1', 'host');
